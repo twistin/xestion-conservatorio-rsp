@@ -91,9 +91,16 @@ export const getProfessorByUserId = async (userId: string): Promise<Professor | 
 
 
 // Instruments
-export const getInstruments = async (): Promise<Instrument[]> => simulateApiCall([...mockInstruments]);
-export const getInstrumentById = async (id: string): Promise<Instrument | undefined> =>
-  simulateApiCall(mockInstruments.find(i => i.id === id));
+export const getInstruments = async (): Promise<Instrument[]> => {
+  const res = await fetch(`${API_BASE}/instruments/`);
+  if (!res.ok) throw new Error('Error al obtener instrumentos');
+  return res.json();
+};
+export const getInstrumentById = async (id: string): Promise<Instrument | undefined> => {
+  const res = await fetch(`${API_BASE}/instruments/${id}/`);
+  if (!res.ok) throw new Error('Error al obtener instrumento');
+  return res.json();
+};
 
 // === CURSOS: USAR BACKEND REAL ===
 export const getCourses = async (): Promise<Course[]> => {
