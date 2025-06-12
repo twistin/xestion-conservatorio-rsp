@@ -52,8 +52,12 @@ export const getStudentById = async (id: string): Promise<Student | undefined> =
   return studentFromApi(data);
 };
 
-export const getStudentByUserId = async (userId: string): Promise<Student | undefined> =>
-  simulateApiCall(mockStudents.find(s => s.userId === userId));
+export const getStudentByUserId = async (userId: string): Promise<Student | undefined> => {
+  const res = await fetch(`${API_BASE}/students/by_user/${userId}/`);
+  if (!res.ok) throw new Error('Error al obtener alumno/a por userId');
+  const data = await res.json();
+  return studentFromApi(data);
+};
 
 
 // === PROFESORADO: USAR BACKEND REAL ===

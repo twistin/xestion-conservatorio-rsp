@@ -167,3 +167,11 @@ def hello_world(request):
 @api_view(['GET'])
 def root_welcome(request):
     return HttpResponse("<h2>Bienvenido al backend de Xestión Conservatorio</h2><p>API disponible en <a href='/api/'>/api/</a></p>")
+
+@api_view(['GET'])
+def student_by_user(request, user_id):
+    try:
+        student = Student.objects.get(user_id=user_id)
+        return Response(StudentSerializer(student).data)
+    except Student.DoesNotExist:
+        return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
