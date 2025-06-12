@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Course, Professor, CourseLevel, SelectOption } from '../../types';
 import Input from '../ui/Input';
@@ -16,7 +15,7 @@ const CourseForm: React.FC<CourseFormProps> = ({ course, professors, onSave, onC
   const [formData, setFormData] = useState<Partial<Course>>({
     name: '',
     description: '',
-    level: CourseLevel.Beginner,
+    level: CourseLevel.Elemental,
     teacherId: '',
     startDate: new Date().toISOString().split('T')[0],
     endDate: '',
@@ -33,7 +32,7 @@ const CourseForm: React.FC<CourseFormProps> = ({ course, professors, onSave, onC
       });
     } else {
       setFormData({
-        name: '', description: '', level: CourseLevel.Beginner, teacherId: '',
+        name: '', description: '', level: CourseLevel.Elemental, teacherId: '',
         startDate: new Date().toISOString().split('T')[0], endDate: '', room: '',
       });
     }
@@ -78,10 +77,10 @@ const CourseForm: React.FC<CourseFormProps> = ({ course, professors, onSave, onC
     label: `${prof.firstName} ${prof.lastName}`,
   }));
 
-  const levelOptions: SelectOption<CourseLevel>[] = Object.values(CourseLevel).map(level => ({
-    value: level,
-    label: level, // These are enums, consider mapping to Galician if needed: 'Principiante', 'Intermedio', 'Avanzado'
-  }));
+  const levelOptions: SelectOption<CourseLevel>[] = [
+    { value: CourseLevel.Elemental, label: 'Grado elemental' },
+    { value: CourseLevel.Profesional, label: 'Grado profesional' },
+  ];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

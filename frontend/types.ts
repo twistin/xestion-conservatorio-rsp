@@ -51,9 +51,8 @@ export interface Instrument {
 }
 
 export enum CourseLevel {
-  Beginner = 'Beginner',
-  Intermediate = 'Intermediate',
-  Advanced = 'Advanced',
+  Elemental = 'Grado elemental',
+  Profesional = 'Grado profesional',
 }
 
 export interface Course {
