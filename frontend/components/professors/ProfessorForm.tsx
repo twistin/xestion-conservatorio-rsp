@@ -68,9 +68,12 @@ const ProfessorForm: React.FC<ProfessorFormProps> = ({ professor, onSave, onCanc
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    // Generar userId si es nuevo
+    const userId = professor?.userId || `user-prof-${Date.now()}`;
     onSave({
       ...professor,
       ...formData,
+      userId,
       hireDate: formData.hireDate,
     } as Professor);
   };
