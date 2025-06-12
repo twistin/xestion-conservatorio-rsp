@@ -1,0 +1,5 @@
+{
+  "name": "Sistema de Xestión do Conservatorio",
+  "description": "Unha aplicación web baseada en React para xestionar un conservatorio de música, incluíndo alumnado, profesorado, cursos, horarios e finanzas. Esta demo amosa as capacidades do frontend e o deseño UI/UX.",
+  "requestFramePermissions": []
+}

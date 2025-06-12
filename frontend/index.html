@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conservatory Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* Custom scrollbar for webkit browsers */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    /* For dark mode */
+    .dark ::-webkit-scrollbar-track {
+      background: #2d3748; /* dark:bg-gray-700 */
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #718096; /* dark:bg-gray-500 */
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: #a0aec0; /* dark:bg-gray-400 */
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class', // or 'media' or 'class'
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563EB', // Deep Blue
+            secondary: '#10B981', // Emerald Green
+            accent: '#8B5CF6', // Musical Purple
+            'neutral-dark': '#1F2937',
+            'neutral-medium': '#6B7280',
+            'neutral-light': '#F3F4F6',
+            'status-red': '#EF4444',
+            'status-yellow': '#F59E0B',
+            'status-blue': '#3B82F6',
+            'dark-bg': '#1A1A1A',
+            'dark-surface': '#2D2D2D',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Poppins', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          animation: {
+            'spin-slow': 'spin 3s linear infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.2",
+    "recharts": "https://esm.sh/recharts@^2.15.3"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-neutral-light dark:bg-dark-bg text-neutral-dark dark:text-neutral-light font-sans">
+  <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
