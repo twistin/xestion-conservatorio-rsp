@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-6tv^00ha_(s=l4v1*^y015tl-d83#5-a7i2!x@#z8ept)cd6h6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'xestion-conservatorio-rsp.onrender.com']
 
 
 # Application definition
