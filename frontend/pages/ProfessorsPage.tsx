@@ -8,51 +8,7 @@ import * as dataService from '../services/dataService';
 import { ICONS } from '../constants';
 import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
-
-// Puedes crear un formulario similar a StudentForm para profesores si no existe
-const ProfessorForm = ({ professor, onSave, onCancel }: { professor: Professor | null, onSave: (data: Professor) => void, onCancel: () => void }) => {
-  const [form, setForm] = useState<Partial<Professor>>(professor || {});
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(form as Professor);
-  };
-  return (
-    <form onSubmit={handleSubmit}>
-      <div className="mb-4">
-        <label>Nome</label>
-        <input className="input" value={form.firstName || ''} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} required />
-      </div>
-      <div className="mb-4">
-        <label>Apelidos</label>
-        <input className="input" value={form.lastName || ''} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} required />
-      </div>
-      <div className="mb-4">
-        <label>Correo electrónico</label>
-        <input className="input" type="email" value={form.email || ''} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required />
-      </div>
-      <div className="mb-4">
-        <label>Especialidade</label>
-        <input className="input" value={form.specialty || ''} onChange={e => setForm(f => ({ ...f, specialty: e.target.value }))} required />
-      </div>
-      <div className="mb-4">
-        <label>Horario de titoría</label>
-        <input className="input" value={form.tutoringSchedule || ''} onChange={e => setForm(f => ({ ...f, tutoringSchedule: e.target.value }))} placeholder="Ex: Luns 16:00-17:00" />
-      </div>
-      <div className="mb-4">
-        <label>Aula(s)</label>
-        <input className="input" value={form.classrooms || ''} onChange={e => setForm(f => ({ ...f, classrooms: e.target.value }))} placeholder="Ex: 101, 102" />
-      </div>
-      <div className="mb-4">
-        <label>Data de contratación</label>
-        <input className="input" type="date" value={form.hireDate || ''} onChange={e => setForm(f => ({ ...f, hireDate: e.target.value }))} required />
-      </div>
-      <div className="flex justify-end space-x-2">
-        <Button type="button" variant="ghost" onClick={onCancel}>Cancelar</Button>
-        <Button type="submit">Gardar</Button>
-      </div>
-    </form>
-  );
-};
+import ProfessorForm from '../components/professors/ProfessorForm';
 
 const ProfessorsPage: React.FC = () => {
   const [professors, setProfessors] = useState<Professor[]>([]);
