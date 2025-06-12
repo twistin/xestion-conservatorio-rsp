@@ -21,7 +21,7 @@ export const getUserById = async (id: string): Promise<User | undefined> =>
 
 
 // === ALUMNADO: USAR BACKEND REAL ===
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = (import.meta as any).env.VITE_API_URL || 'https://xestion-conservatorio-rsp.onrender.com/api';
 
 function studentFromApi(apiStudent: any): Student {
   return {
