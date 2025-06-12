@@ -1,9 +1,8 @@
-
 import React from 'react';
-import ComingSoon from '../components/shared/ComingSoon';
+import ReportsOverview from '../components/reports/ReportsOverview';
 
 const ReportsPage: React.FC = () => {
-  return <ComingSoon featureName="Reports & Analytics" />;
+  return <ReportsOverview />;
 };
 
 export default ReportsPage;
