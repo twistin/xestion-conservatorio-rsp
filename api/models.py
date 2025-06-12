@@ -40,3 +40,7 @@ class Payment(models.Model):
     status = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
     invoice_url = models.CharField(max_length=255, blank=True, null=True)
+
+class Instrument(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=255, blank=True, null=True)

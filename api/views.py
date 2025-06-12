@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import viewsets, serializers
-from .models import Student, Professor, Course, Payment
+from .models import Student, Professor, Course, Payment, Instrument
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
@@ -26,6 +26,11 @@ class CourseSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
+        fields = '__all__'
+
+class InstrumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instrument
         fields = '__all__'
 
 @csrf_exempt
@@ -159,6 +164,19 @@ def payment_detail(request, pk):
     elif request.method == 'DELETE':
         payment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@csrf_exempt
+@api_view(['GET', 'POST'])
+def instruments_list(request):
+    if request.method == 'GET':
+        instruments = Instrument.objects.all()
+        return Response(InstrumentSerializer(instruments, many=True).data)
+    elif request.method == 'POST':
+        serializer = InstrumentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def hello_world(request):
