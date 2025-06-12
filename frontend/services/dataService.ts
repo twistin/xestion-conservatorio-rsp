@@ -241,10 +241,16 @@ export const addItem = async <T extends {id?: string}>(item: Omit<T, 'id'>, type
     return professorFromApi(await res.json()) as any;
   }
   if (type === 'course') {
+    // Transformar teacherId a teacher para el backend
+    const snakeCaseCourse = {
+      ...item,
+      teacher: (item as any).teacherId || null,
+    };
+    delete (snakeCaseCourse as any).teacherId;
     const res = await fetch(`${API_BASE}/courses/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(item)
+      body: JSON.stringify(snakeCaseCourse)
     });
     if (!res.ok) throw new Error('Error al crear curso');
     return res.json();
@@ -293,10 +299,16 @@ export const updateItem = async <T extends {id: string}>(item: T, type: string):
     return professorFromApi(await res.json()) as any;
   }
   if (type === 'course') {
-    const res = await fetch(`${API_BASE}/courses/${item.id}/`, {
+    // Transformar teacherId a teacher para el backend
+    const snakeCaseCourse = {
+      ...item,
+      teacher: (item as any).teacherId || null,
+    };
+    delete (snakeCaseCourse as any).teacherId;
+    const res = await fetch(`${API_BASE}/courses/${(item as any).id}/`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(item)
+      body: JSON.stringify(snakeCaseCourse)
     });
     if (!res.ok) throw new Error('Error al actualizar curso');
     return res.json();
