@@ -53,7 +53,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     const year = new Date(e.enrollmentDate).getFullYear();
     enrollmentsByYear[year] = (enrollmentsByYear[year] || 0) + 1;
   });
-  const enrollmentChartData = Object.entries(enrollmentsByYear).map(([year, count]) => ({ name: year, enrollments: count }));
+
+  // Calcular rango de años: 5 antes y 5 después del actual
+  const currentYear = new Date().getFullYear();
+  const yearsRange = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
+  const enrollmentChartData = yearsRange.map(year => ({
+    name: year.toString(),
+    enrollments: enrollmentsByYear[year] || 0
+  }));
   
   const quickLinks = [
     { label: "Xestionar Alumnado", href: ROUTES.students, icon: ICONS.students },
