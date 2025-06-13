@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState }from 'react';
-import { User, Course, Enrollment, Payment, Grade, Instrument, Student } from '../../types';
+import { User, Course, Grade } from '../../types';
 import PageContainer from '../layout/PageContainer';
 import MetricCard from '../ui/MetricCard';
 import Card from '../ui/Card';
@@ -21,7 +20,6 @@ interface StudentMetrics {
 
 const StudentDashboard: React.FC<StudentDashboardProps> = ({ user }) => {
   const [metrics, setMetrics] = useState<StudentMetrics | null>(null);
-  const [studentDetails, setStudentDetails] = useState<Student | null>(null);
   const [enrolledCourses, setEnrolledCourses] = useState<Course[]>([]);
   const [recentGrades, setRecentGrades] = useState<Grade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,13 +28,9 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ user }) => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const student = await dataService.getStudentByUserId(user.id);
-        if (!student) throw new Error("Datos do alumno non atopados");
-        setStudentDetails(student);
-
         const [metricsData, enrollmentsData] = await Promise.all([
           dataService.getDashboardMetrics(user.role, user.id) as Promise<StudentMetrics>,
-          dataService.getEnrollmentsByStudentId(student.id)
+          dataService.getEnrollmentsByStudentId(user.id)
         ]);
         
         setMetrics(metricsData);
@@ -61,6 +55,13 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ user }) => {
     fetchData();
   }, [user.id, user.role]);
   
+  // Recarga manual
+  const handleRefresh = () => {
+    setIsLoading(true);
+    // Forzar re-ejecución del useEffect
+    setTimeout(() => window.location.reload(), 100);
+  };
+
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];
 
   const quickLinks = [
@@ -72,6 +73,11 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ user }) => {
 
   return (
     <PageContainer title={`Benvido/a, ${user.firstName}!`} breadcrumbs={breadcrumbs}>
+      <div className="flex justify-end mb-2">
+        <Button variant="outline" iconLeft="fa-solid fa-rotate" onClick={handleRefresh}>
+          Recargar
+        </Button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <MetricCard title="Cursos Activos" value={metrics?.enrolledCourses ?? 0} icon={ICONS.courses} iconBgColor="bg-blue-500" isLoading={isLoading}/>
         <MetricCard title="Pagamentos Pendentes" value={metrics?.pendingPayments ?? 0} icon={ICONS.payments} iconBgColor="bg-yellow-500" isLoading={isLoading}/>
@@ -85,10 +91,11 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ user }) => {
             <div className="space-y-3 max-h-96 overflow-y-auto">
                 {enrolledCourses.map(course => (
                 <Link key={course.id} to={`${ROUTES.myCourses}?courseId=${course.id}`} className="block hover:no-underline">
-                    <Card titleClassName="py-3 px-4" title={course.name} className="bg-neutral-light dark:bg-neutral-dark shadow-sm hover:shadow-md cursor-pointer">
-                        <p className="text-xs text-neutral-medium dark:text-gray-400">{course.description}</p>
-                        <p className="text-xs mt-1 text-primary dark:text-accent">{course.level}</p>
-                    </Card>
+                  <Card titleClassName="py-3 px-4" title={course.name} className="bg-neutral-light dark:bg-neutral-dark shadow-sm hover:shadow-md cursor-pointer">
+                    <p className="text-xs text-neutral-medium dark:text-gray-400">{course.description}</p>
+                    <p className="text-xs mt-1 text-primary dark:text-accent">{course.level}</p>
+                    <Link to={`${ROUTES.myCourses}?courseId=${course.id}`} className="mt-2 px-0 text-xs text-primary underline inline-block">Ver detalles</Link>
+                  </Card>
                 </Link>
                 ))}
             </div>
@@ -123,6 +130,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ user }) => {
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${grade.score >= 80 ? 'bg-secondary/20 text-secondary' : grade.score >= 60 ? 'bg-yellow-500/20 text-yellow-600' : 'bg-status-red/20 text-status-red'}`}>
                     {grade.score}/100
                   </span>
+                  <Link to={`${ROUTES.myGrades}?gradeId=${grade.id}`} className="ml-2 text-xs text-primary underline">Ver detalle</Link>
                 </div>
                 <p className="text-xs text-neutral-medium dark:text-gray-400">
                     Cualificado o: {new Date(grade.dateGiven).toLocaleDateString('gl-ES')}
