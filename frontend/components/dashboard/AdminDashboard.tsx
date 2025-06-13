@@ -29,6 +29,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const [isIaLoading, setIsIaLoading] = useState(true);
   const [scheduleOpt, setScheduleOpt] = useState<dataService.IAScheduleOptimization | null>(null);
   const [isScheduleOptLoading, setIsScheduleOptLoading] = useState(true);
+  const [demandPrediction, setDemandPrediction] = useState<dataService.IADemandPrediction | null>(null);
+  const [isDemandPredictionLoading, setIsDemandPredictionLoading] = useState(true);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -67,6 +69,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
       .then(setScheduleOpt)
       .catch(() => setScheduleOpt(null))
       .finally(() => setIsScheduleOptLoading(false));
+  }, []);
+
+  useEffect(() => {
+    setIsDemandPredictionLoading(true);
+    dataService.getIADemandPrediction()
+      .then(setDemandPrediction)
+      .catch(() => setDemandPrediction(null))
+      .finally(() => setIsDemandPredictionLoading(false));
   }, []);
 
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];
@@ -164,6 +174,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
           <div className="mt-3 text-xs text-neutral-medium">
             Revise los cursos implicados y ajuste los horarios desde la sección de <Link to="/courses" className="underline text-primary">gestión de cursos</Link>.
           </div>
+        </Card>
+        <Card title="Predicción de Demanda IA" className="lg:col-span-1">
+          {isDemandPredictionLoading ? (
+            <div className="h-32 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div>
+          ) : demandPrediction ? (
+            <ul className="list-disc pl-5 text-sm mt-1">
+              {demandPrediction.predictions.length === 0 ? <li>No hay datos suficientes.</li> : demandPrediction.predictions.map((pred, i) => (
+                <li key={i} className="mb-2">
+                  <b>{pred.name}:</b> {pred.last_year ? `Último año (${pred.last_year}): ${pred.last_year_enrollments} → Predicción siguiente año: ` : ''}
+                  <span className="text-primary font-semibold">{pred.predicted_next_year}</span> matrículas
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-sm text-status-red">No se pudo cargar la predicción IA.</div>
+          )}
         </Card>
       </div>
 

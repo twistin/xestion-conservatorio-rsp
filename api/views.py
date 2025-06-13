@@ -309,3 +309,49 @@ def ia_schedule_optimization(request):
                     'suggestion': f"Separar '{current['name']}' y '{next_['name']}' en el aula {room} para evitar solapamiento."
                 })
     return Response({'optimizations': optimizations})
+
+# --- IA Administrativa: Predicción de demanda por curso ---
+from datetime import datetime
+
+@api_view(['GET'])
+def ia_demand_prediction(request):
+    # Obtener todas las matrículas y cursos
+    enrollments = []
+    for c in Course.objects.all():
+        # Contar matrículas por año para este curso
+        years = {}
+        for s in c.student_set.all():
+            year = s.enrollment_date.year if s.enrollment_date else None
+            if year:
+                years[year] = years.get(year, 0) + 1
+        # Ordenar años y calcular tendencia simple (diferencia entre últimos dos años)
+        sorted_years = sorted(years.items())
+        trend = 0
+        if len(sorted_years) >= 2:
+            trend = sorted_years[-1][1] - sorted_years[-2][1]
+        prediction = sorted_years[-1][1] + trend if sorted_years else 0
+        enrollments.append({
+            'course_id': c.id,
+            'name': c.name,
+            'last_year': sorted_years[-1][0] if sorted_years else None,
+            'last_year_enrollments': sorted_years[-1][1] if sorted_years else 0,
+            'predicted_next_year': prediction
+        })
+    return Response({'predictions': enrollments})
+
+# --- IA Asistente automático para profesores (FAQ) ---
+@api_view(['POST'])
+def ia_professor_faq(request):
+    question = request.data.get('question', '').lower()
+    # Respuestas simuladas
+    faqs = {
+        'cómo subo un recurso': 'Para subir un recurso, accede a la sección "Recursos" y haz clic en "Añadir nuevo recurso".',
+        'cómo registrar asistencia': 'Ve a la sección de asistencia, selecciona el curso y marca la presencia de los alumnos.',
+        'cómo contactar con administración': 'Puedes enviar un mensaje desde la sección "Comunicación" o escribir a admin@conservatorio.edu.',
+        'cómo ver mi horario': 'Tu horario está disponible en la sección "Horario Profesor" del menú lateral.',
+        'cómo añadir observaciones': 'En la página de estudiantes asignados, haz clic en el alumno y selecciona "Añadir observación".'
+    }
+    for k, v in faqs.items():
+        if k in question:
+            return Response({'answer': v})
+    return Response({'answer': 'No se encontró una respuesta automática. Por favor, contacta con administración.'})

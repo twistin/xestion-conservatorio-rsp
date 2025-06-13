@@ -18,4 +18,6 @@ urlpatterns = [
     path('observations/<int:pk>/', views.observation_detail, name='observation_detail'),
     path('ia/enrollment-analysis/', views.ia_enrollment_analysis, name='ia_enrollment_analysis'),
     path('ia/schedule-optimization/', views.ia_schedule_optimization, name='ia_schedule_optimization'),
+    path('ia/demand-prediction/', views.ia_demand_prediction, name='ia_demand_prediction'),
+    path('ia/professor-faq/', views.ia_professor_faq, name='ia_professor_faq'),
 ]

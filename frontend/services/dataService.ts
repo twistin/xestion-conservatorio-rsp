@@ -471,3 +471,24 @@ export const getIAScheduleOptimization = async (): Promise<IAScheduleOptimizatio
   if (!res.ok) throw new Error('Error al obtener optimización de horarios IA');
   return await res.json();
 };
+
+export interface IADemandPrediction {
+  predictions: { course_id: number; name: string; last_year: number|null; last_year_enrollments: number; predicted_next_year: number }[];
+}
+
+export const getIADemandPrediction = async (): Promise<IADemandPrediction> => {
+  const res = await fetch(`${API_BASE}/ia/demand-prediction/`);
+  if (!res.ok) throw new Error('Error al obtener predicción de demanda IA');
+  return await res.json();
+};
+
+// Asistente IA para profesores
+export const askProfessorFAQ = async (question: string): Promise<{answer: string}> => {
+  const res = await fetch(`${API_BASE}/ia/professor-faq/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question })
+  });
+  if (!res.ok) throw new Error('Error al consultar el asistente IA');
+  return await res.json();
+};
