@@ -77,6 +77,7 @@ const LoginPage: React.FC = () => {
         <div className="mt-6 text-center">
             <p className="text-sm text-neutral-medium dark:text-gray-400 mb-2">Inicios de sesión rápidos (Demo):</p>
             <div className="flex flex-wrap justify-center gap-2">
+                <Button onClick={() => quickLogin('admin')} variant="outline" size="sm">Admin</Button>
                 <Button onClick={() => quickLogin('jdoe')} variant="outline" size="sm">Profesor</Button>
                 <Button onClick={() => quickLogin('bwayne')} variant="outline" size="sm">Alumno</Button>
             </div>
