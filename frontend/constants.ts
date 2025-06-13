@@ -76,6 +76,18 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Alumnado Asignado', href: ROUTES.assignedStudents, icon: 'fa-solid fa-users', roles: [UserRole.Professor] },
   { label: 'Xestionar Cualificacións', href: ROUTES.manageGrades, icon: 'fa-solid fa-marker', roles: [UserRole.Professor] },
   
+  // Professor advanced modules
+  { label: 'Estudiantes Asignados', href: '/professor-assigned-students', icon: 'fa-solid fa-users', roles: [UserRole.Professor] },
+  { label: 'Horario Profesor', href: '/professor-schedule', icon: 'fa-solid fa-calendar-alt', roles: [UserRole.Professor] },
+  { label: 'Evaluaciones', href: '/professor-evaluations', icon: 'fa-solid fa-clipboard-check', roles: [UserRole.Professor] },
+  { label: 'Recursos', href: '/professor-resources', icon: 'fa-solid fa-music', roles: [UserRole.Professor] },
+  { label: 'Comunicación', href: '/professor-messages', icon: 'fa-solid fa-comments', roles: [UserRole.Professor] },
+  { label: 'Ausencias', href: '/professor-attendance', icon: 'fa-solid fa-user-times', roles: [UserRole.Professor] },
+  { label: 'Asistente IA', href: '/professor-ai', icon: 'fa-solid fa-robot', roles: [UserRole.Professor] },
+  { label: 'Actividades', href: '/professor-activities', icon: 'fa-solid fa-users-rectangle', roles: [UserRole.Professor] },
+  { label: 'Estadísticas', href: '/professor-stats', icon: 'fa-solid fa-chart-bar', roles: [UserRole.Professor] },
+  { label: 'Administración', href: '/professor-admin', icon: 'fa-solid fa-file-alt', roles: [UserRole.Professor] },
+
   // Student specific
   { label: 'Os Meus Cursos', href: ROUTES.myCourses, icon: 'fa-solid fa-book-open-reader', roles: [UserRole.Student] },
   { label: 'O Meu Horario', href: ROUTES.schedules, icon: 'fa-solid fa-calendar-check', roles: [UserRole.Student] },

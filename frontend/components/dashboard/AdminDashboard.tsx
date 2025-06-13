@@ -8,7 +8,6 @@ import Card from '../ui/Card';
 import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { mockEnrollments } from '../../services/mockData';
 
 
 interface AdminDashboardProps {
@@ -25,17 +24,22 @@ interface AdminMetrics {
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [enrollments, setEnrollments] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchMetrics = async () => {
       setIsLoading(true);
       try {
-        const data = await dataService.getDashboardMetrics(user.role, user.id) as AdminMetrics;
+        const [data, realEnrollments] = await Promise.all([
+          dataService.getDashboardMetrics(user.role, user.id) as Promise<AdminMetrics>,
+          dataService.getAllEnrollments()
+        ]);
         // Simulating translation for dynamic data for demo purposes
         if (data && data.recentEnrollments) {
             data.recentEnrollments = data.recentEnrollments.map(e => e.replace("Student", "Alumno/a").replace("enrolled in", "matriculouse en"));
         }
         setMetrics(data);
+        setEnrollments(realEnrollments);
       } catch (error) {
         console.error("Failed to fetch admin metrics", error);
       } finally {
@@ -47,10 +51,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
 
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];
 
-  // Agrupar matrículas por año
+  // Agrupar matrículas por año usando datos reales
   const enrollmentsByYear: Record<string, number> = {};
-  mockEnrollments.forEach((e) => {
-    const year = new Date(e.enrollmentDate).getFullYear();
+  enrollments.forEach((e) => {
+    const year = new Date(e.enrollment_date || e.enrollmentDate).getFullYear();
     enrollmentsByYear[year] = (enrollmentsByYear[year] || 0) + 1;
   });
 

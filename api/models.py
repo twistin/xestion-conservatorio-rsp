@@ -44,3 +44,11 @@ class Payment(models.Model):
 class Instrument(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=255, blank=True, null=True)
+
+class Observation(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    text = models.TextField()
+    # Opcional: tipo, adjuntos, etc.

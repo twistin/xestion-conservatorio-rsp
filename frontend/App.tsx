@@ -25,6 +25,16 @@ import StudentActivitiesPage from './pages/StudentActivitiesPage';
 import StudentAIPage from './pages/StudentAIPage';
 import StudentStatsPage from './pages/StudentStatsPage';
 import StudentSurveysPage from './pages/StudentSurveysPage';
+import ProfessorAssignedStudentsPage from './pages/ProfessorAssignedStudentsPage';
+import ProfessorSchedulePage from './pages/ProfessorSchedulePage';
+import ProfessorEvaluationsPage from './pages/ProfessorEvaluationsPage';
+import ProfessorResourcesPage from './pages/ProfessorResourcesPage';
+import ProfessorMessagesPage from './pages/ProfessorMessagesPage';
+import ProfessorAttendancePage from './pages/ProfessorAttendancePage';
+import ProfessorAIAssistantPage from './pages/ProfessorAIAssistantPage';
+import ProfessorActivitiesPage from './pages/ProfessorActivitiesPage';
+import ProfessorStatsPage from './pages/ProfessorStatsPage';
+import ProfessorAdminPage from './pages/ProfessorAdminPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
@@ -80,6 +90,16 @@ const App: React.FC = () => {
                   <>
                     <Route path="/assigned-students" element={<ComingSoon featureName="Assigned Students" />} />
                     <Route path="/manage-grades" element={<ComingSoon featureName="Manage Grades" />} />
+                    <Route path="/professor-assigned-students" element={<ProfessorAssignedStudentsPage />} />
+                    <Route path="/professor-schedule" element={<ProfessorSchedulePage />} />
+                    <Route path="/professor-evaluations" element={<ProfessorEvaluationsPage />} />
+                    <Route path="/professor-resources" element={<ProfessorResourcesPage />} />
+                    <Route path="/professor-messages" element={<ProfessorMessagesPage />} />
+                    <Route path="/professor-attendance" element={<ProfessorAttendancePage />} />
+                    <Route path="/professor-ai" element={<ProfessorAIAssistantPage />} />
+                    <Route path="/professor-activities" element={<ProfessorActivitiesPage />} />
+                    <Route path="/professor-stats" element={<ProfessorStatsPage />} />
+                    <Route path="/professor-admin" element={<ProfessorAdminPage />} />
                   </>
                 )}
 

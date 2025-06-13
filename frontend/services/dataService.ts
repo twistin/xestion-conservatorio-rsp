@@ -170,6 +170,12 @@ export const updatePayment = async (payment: Payment): Promise<Payment> => {
 
 
 // Enrollments
+export const getAllEnrollments = async (): Promise<Enrollment[]> => {
+  const res = await fetch(`${API_BASE}/enrollments/`);
+  if (!res.ok) throw new Error('Error al obtener matrículas');
+  return res.json();
+};
+
 export const getEnrollments = async (): Promise<Enrollment[]> => simulateApiCall(mockEnrollments);
 export const getEnrollmentsByStudentId = async (studentId: string): Promise<Enrollment[]> =>
   simulateApiCall(mockEnrollments.filter(e => e.studentId === studentId));
@@ -397,4 +403,49 @@ export const getDashboardMetrics = async (role: UserRole, userId: string) => {
     });
   }
   return simulateApiCall(null);
+};
+
+// Observaciones pedagógicas (backend real)
+export interface Observation {
+  id: number;
+  student: string; // id
+  course: string; // id
+  professor: string; // id
+  date: string;
+  text: string;
+}
+
+export const getObservations = async (filters: {student?: string, course?: string, professor?: string} = {}): Promise<Observation[]> => {
+  const params = new URLSearchParams();
+  if (filters.student) params.append('student', filters.student);
+  if (filters.course) params.append('course', filters.course);
+  if (filters.professor) params.append('professor', filters.professor);
+  const res = await fetch(`${API_BASE}/observations/?${params.toString()}`);
+  if (!res.ok) throw new Error('Error al obtener observaciones');
+  return res.json();
+};
+
+export const addObservation = async (observation: Omit<Observation, 'id' | 'date'>): Promise<Observation> => {
+  const res = await fetch(`${API_BASE}/observations/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(observation)
+  });
+  if (!res.ok) throw new Error('Error al crear observación');
+  return res.json();
+};
+
+export const updateObservation = async (id: number, observation: Partial<Observation>): Promise<Observation> => {
+  const res = await fetch(`${API_BASE}/observations/${id}/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(observation)
+  });
+  if (!res.ok) throw new Error('Error al actualizar observación');
+  return res.json();
+};
+
+export const deleteObservation = async (id: number): Promise<void> => {
+  const res = await fetch(`${API_BASE}/observations/${id}/`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Error al eliminar observación');
 };
