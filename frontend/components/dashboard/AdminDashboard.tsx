@@ -5,7 +5,6 @@ import MetricCard from '../ui/MetricCard';
 import { ICONS, ROUTES } from '../../constants';
 import * as dataService from '../../services/dataService';
 import Card from '../ui/Card';
-import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -25,6 +24,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [iaAnalysis, setIaAnalysis] = useState<dataService.IAEnrollmentAnalysis | null>(null);
+  const [isIaLoading, setIsIaLoading] = useState(true);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -49,6 +50,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     fetchMetrics();
   }, [user.role, user.id]);
 
+  useEffect(() => {
+    setIsIaLoading(true);
+    dataService.getIAEnrollmentAnalysis()
+      .then(setIaAnalysis)
+      .catch(() => setIaAnalysis(null))
+      .finally(() => setIsIaLoading(false));
+  }, []);
+
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];
 
   // Agrupar matrículas por año usando datos reales
@@ -66,13 +75,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     enrollments: enrollmentsByYear[year] || 0
   }));
   
-  const quickLinks = [
-    { label: "Xestionar Alumnado", href: ROUTES.students, icon: ICONS.students },
-    { label: "Xestionar Profesorado", href: ROUTES.professors, icon: ICONS.professors },
-    { label: "Xestionar Cursos", href: ROUTES.courses, icon: ICONS.courses },
-    { label: "Ver Horarios", href: ROUTES.schedules, icon: ICONS.calendar },
-  ];
-
 
   return (
     <PageContainer title={`Benvido/a, ${user.firstName}!`} breadcrumbs={breadcrumbs}>
@@ -84,7 +86,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <Card title="Matrículas Anuais" className="lg:col-span-2">
+        <Card title="Matrículas Anuales" className="lg:col-span-2">
           {isLoading ? <div className="h-64 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div> : (
              <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={enrollmentChartData}>
@@ -98,19 +100,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
               </ResponsiveContainer>
           )}
         </Card>
-        
-        <Card title="Accesos Rápidos">
-            {isLoading ? <div className="space-y-2"> {[1,2,3,4].map(i=><div key={i} className="h-10 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div>)} </div> :
-            <div className="space-y-3">
-                {quickLinks.map(link => (
-                    <Link key={link.label} to={link.href}>
-                        <Button variant="outline" className="w-full justify-start" iconLeft={link.icon}>
-                            {link.label}
-                        </Button>
-                    </Link>
-                ))}
-            </div>
-            }
+        <Card title="IA Administrativa" className="lg:col-span-1">
+          {isIaLoading ? (
+            <div className="h-48 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div>
+          ) : iaAnalysis ? (
+            <>
+              <div className="mb-3">
+                <b>📊 Asignaturas más elegidas:</b>
+                <ul className="list-disc pl-5 text-sm mt-1">
+                  {iaAnalysis.top_courses.length === 0 ? <li>No hay datos.</li> : iaAnalysis.top_courses.map(c => (
+                    <li key={c.course_id}>{c.name} <span className="text-neutral-medium">({c.num_enrollments} matrículas)</span></li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mb-3">
+                <b>🕒 Horarios saturados:</b>
+                <ul className="list-disc pl-5 text-sm mt-1">
+                  {iaAnalysis.saturated_schedules.length === 0 ? <li>No hay solapamientos detectados.</li> : iaAnalysis.saturated_schedules.map((s, i) => (
+                    <li key={i}>Aula {s.room} - {s.date}: <span className="text-status-red">{s.count} cursos</span></li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-4">
+                <Button variant="primary" className="w-full" disabled>
+                  IA Administrativa (demo)
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="text-sm text-status-red">No se pudo cargar el análisis IA.</div>
+          )}
         </Card>
       </div>
 

@@ -16,4 +16,5 @@ urlpatterns = [
     path('instruments/', views.instruments_list, name='instruments_list'),
     path('observations/', views.observations_list, name='observations_list'),
     path('observations/<int:pk>/', views.observation_detail, name='observation_detail'),
+    path('ia/enrollment-analysis/', views.ia_enrollment_analysis, name='ia_enrollment_analysis'),
 ]

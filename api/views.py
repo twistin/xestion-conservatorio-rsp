@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.db.models import Count
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -239,3 +240,37 @@ def student_by_user(request, user_id):
         return Response(StudentSerializer(student).data)
     except Student.DoesNotExist:
         return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# --- IA Administrativa: Análisis de matrículas ---
+@api_view(['GET'])
+def ia_enrollment_analysis(request):
+    # Asignaturas más elegidas (por nombre de curso)
+    top_courses = (
+        Course.objects
+        .annotate(num_enrollments=Count('enrollment'))
+        .order_by('-num_enrollments')[:5]
+    )
+    top_courses_data = [
+        {
+            'course_id': c.id,
+            'name': c.name,
+            'num_enrollments': c.num_enrollments
+        } for c in top_courses
+    ]
+
+    # Horarios saturados: contar cuántos cursos hay por franja horaria (start_date, end_date, room)
+    # Para simplificar, agrupamos por room y start_date
+    from collections import Counter
+    schedule_counter = Counter()
+    for course in Course.objects.exclude(room__isnull=True).exclude(start_date__isnull=True):
+        key = f"{course.room} - {course.start_date}"
+        schedule_counter[key] += 1
+    saturated_schedules = [
+        {'room': k.split(' - ')[0], 'date': k.split(' - ')[1], 'count': v}
+        for k, v in schedule_counter.items() if v > 1
+    ]
+
+    return Response({
+        'top_courses': top_courses_data,
+        'saturated_schedules': saturated_schedules
+    })

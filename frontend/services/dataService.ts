@@ -449,3 +449,15 @@ export const deleteObservation = async (id: number): Promise<void> => {
   const res = await fetch(`${API_BASE}/observations/${id}/`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Error al eliminar observación');
 };
+
+// === IA ADMINISTRATIVA ===
+export interface IAEnrollmentAnalysis {
+  top_courses: { course_id: number; name: string; num_enrollments: number }[];
+  saturated_schedules: { room: string; date: string; count: number }[];
+}
+
+export const getIAEnrollmentAnalysis = async (): Promise<IAEnrollmentAnalysis> => {
+  const res = await fetch(`${API_BASE}/ia/enrollment-analysis/`);
+  if (!res.ok) throw new Error('Error al obtener análisis de matrículas IA');
+  return await res.json();
+};
