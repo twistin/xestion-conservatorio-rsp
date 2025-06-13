@@ -7,6 +7,7 @@ import * as dataService from '../../services/dataService';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Link } from 'react-router-dom';
 
 
 interface AdminDashboardProps {
@@ -26,6 +27,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [iaAnalysis, setIaAnalysis] = useState<dataService.IAEnrollmentAnalysis | null>(null);
   const [isIaLoading, setIsIaLoading] = useState(true);
+  const [scheduleOpt, setScheduleOpt] = useState<dataService.IAScheduleOptimization | null>(null);
+  const [isScheduleOptLoading, setIsScheduleOptLoading] = useState(true);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -56,6 +59,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
       .then(setIaAnalysis)
       .catch(() => setIaAnalysis(null))
       .finally(() => setIsIaLoading(false));
+  }, []);
+
+  useEffect(() => {
+    setIsScheduleOptLoading(true);
+    dataService.getIAScheduleOptimization()
+      .then(setScheduleOpt)
+      .catch(() => setScheduleOpt(null))
+      .finally(() => setIsScheduleOptLoading(false));
   }, []);
 
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];
@@ -130,6 +141,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
           ) : (
             <div className="text-sm text-status-red">No se pudo cargar el análisis IA.</div>
           )}
+        </Card>
+        <Card title="Optimización de Horarios IA" className="lg:col-span-1">
+          {isScheduleOptLoading ? (
+            <div className="h-32 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div>
+          ) : scheduleOpt ? (
+            <ul className="list-disc pl-5 text-sm mt-1">
+              {scheduleOpt.optimizations.length === 0 ? <li>No hay solapamientos detectados.</li> : scheduleOpt.optimizations.map((opt, i) => (
+                <li key={i} className="mb-2">
+                  <b>Aula {opt.room}:</b> {opt.suggestion}
+                  <div className="ml-2 mt-1 text-xs text-neutral-medium">
+                    Cursos implicados: {opt.courses.map((name, idx) => (
+                      <span key={idx}>{name}{idx < opt.courses.length-1 ? ', ' : ''}</span>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-sm text-status-red">No se pudo cargar la optimización IA.</div>
+          )}
+          <div className="mt-3 text-xs text-neutral-medium">
+            Revise los cursos implicados y ajuste los horarios desde la sección de <Link to="/courses" className="underline text-primary">gestión de cursos</Link>.
+          </div>
         </Card>
       </div>
 

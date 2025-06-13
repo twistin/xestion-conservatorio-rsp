@@ -461,3 +461,13 @@ export const getIAEnrollmentAnalysis = async (): Promise<IAEnrollmentAnalysis> =
   if (!res.ok) throw new Error('Error al obtener análisis de matrículas IA');
   return await res.json();
 };
+
+export interface IAScheduleOptimization {
+  optimizations: { room: string; courses: string[]; suggestion: string }[];
+}
+
+export const getIAScheduleOptimization = async (): Promise<IAScheduleOptimization> => {
+  const res = await fetch(`${API_BASE}/ia/schedule-optimization/`);
+  if (!res.ok) throw new Error('Error al obtener optimización de horarios IA');
+  return await res.json();
+};

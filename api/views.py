@@ -8,6 +8,7 @@ from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.db.models import Count
+from datetime import timedelta
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -274,3 +275,37 @@ def ia_enrollment_analysis(request):
         'top_courses': top_courses_data,
         'saturated_schedules': saturated_schedules
     })
+
+# --- IA Administrativa: Optimización de horarios ---
+@api_view(['GET'])
+def ia_schedule_optimization(request):
+    # Obtener todos los cursos con sala y horario definidos
+    courses = Course.objects.exclude(room__isnull=True).exclude(start_date__isnull=True).exclude(end_date__isnull=True)
+    # Agrupar por aula
+    room_schedules = {}
+    for c in courses:
+        key = c.room
+        if key not in room_schedules:
+            room_schedules[key] = []
+        room_schedules[key].append({
+            'course_id': c.id,
+            'name': c.name,
+            'start_date': c.start_date,
+            'end_date': c.end_date
+        })
+    # Detectar solapamientos y sugerir combinaciones
+    optimizations = []
+    for room, scheds in room_schedules.items():
+        # Ordenar por fecha de inicio
+        scheds_sorted = sorted(scheds, key=lambda x: x['start_date'])
+        for i in range(len(scheds_sorted)-1):
+            current = scheds_sorted[i]
+            next_ = scheds_sorted[i+1]
+            # Si el fin del actual es posterior al inicio del siguiente, hay solapamiento
+            if current['end_date'] >= next_['start_date']:
+                optimizations.append({
+                    'room': room,
+                    'courses': [current['name'], next_['name']],
+                    'suggestion': f"Separar '{current['name']}' y '{next_['name']}' en el aula {room} para evitar solapamiento."
+                })
+    return Response({'optimizations': optimizations})
