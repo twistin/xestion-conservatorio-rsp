@@ -1,4 +1,3 @@
-
 import { UserRole } from './types';
 
 export const APP_NAME = "Xestión Conservatorio";
@@ -41,6 +40,17 @@ export const ROUTES = {
   myGrades: '/my-grades', // Student
   assignedStudents: '/assigned-students', // Professor
   manageGrades: '/manage-grades', // Professor
+  // Nuevos módulos estudiante
+  studentProfile: '/student-profile',
+  studentSchedule: '/student-schedule',
+  studentEvaluations: '/student-evaluations',
+  studentResources: '/student-resources',
+  studentMessages: '/student-messages',
+  studentAdmin: '/student-admin',
+  studentActivities: '/student-activities',
+  studentAI: '/student-ai',
+  studentStats: '/student-stats',
+  studentSurveys: '/student-surveys',
 };
 
 interface NavItem {
@@ -71,6 +81,17 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'O Meu Horario', href: ROUTES.schedules, icon: 'fa-solid fa-calendar-check', roles: [UserRole.Student] },
   { label: 'As Miñas Cualificacións', href: ROUTES.myGrades, icon: 'fa-solid fa-graduation-cap', roles: [UserRole.Student] },
   { label: 'Os Meus Pagamentos', href: ROUTES.payments, icon: 'fa-solid fa-file-invoice-dollar', roles: [UserRole.Student] },
+  // Student specific (añadir módulos avanzados)
+  { label: 'Perfil', href: ROUTES.studentProfile, icon: 'fa-solid fa-user', roles: [UserRole.Student] },
+  { label: 'Horario', href: ROUTES.studentSchedule, icon: 'fa-solid fa-calendar-days', roles: [UserRole.Student] },
+  { label: 'Evaluaciones', href: ROUTES.studentEvaluations, icon: 'fa-solid fa-clipboard-check', roles: [UserRole.Student] },
+  { label: 'Recursos', href: ROUTES.studentResources, icon: 'fa-solid fa-music', roles: [UserRole.Student] },
+  { label: 'Comunicación', href: ROUTES.studentMessages, icon: 'fa-solid fa-comments', roles: [UserRole.Student] },
+  { label: 'Administración', href: ROUTES.studentAdmin, icon: 'fa-solid fa-file-alt', roles: [UserRole.Student] },
+  { label: 'Actividades', href: ROUTES.studentActivities, icon: 'fa-solid fa-users-rectangle', roles: [UserRole.Student] },
+  { label: 'Asistente IA', href: ROUTES.studentAI, icon: 'fa-solid fa-robot', roles: [UserRole.Student] },
+  { label: 'Estadísticas', href: ROUTES.studentStats, icon: 'fa-solid fa-chart-bar', roles: [UserRole.Student] },
+  { label: 'Encuestas', href: ROUTES.studentSurveys, icon: 'fa-solid fa-poll', roles: [UserRole.Student] },
 
   // Common
   { label: 'Horarios Xerais', href: ROUTES.schedules, icon: 'fa-solid fa-calendar-days', roles: [UserRole.Admin] }, // Admin general schedule view

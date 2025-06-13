@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
@@ -16,6 +15,16 @@ import PaymentsPage from './pages/PaymentsPage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
 import NotificationsPage from './pages/NotificationsPage';
+import StudentProfilePage from './pages/StudentProfilePage';
+import StudentSchedulePage from './pages/StudentSchedulePage';
+import StudentEvaluationsPage from './pages/StudentEvaluationsPage';
+import StudentResourcesPage from './pages/StudentResourcesPage';
+import StudentMessagesPage from './pages/StudentMessagesPage';
+import StudentAdminPage from './pages/StudentAdminPage';
+import StudentActivitiesPage from './pages/StudentActivitiesPage';
+import StudentAIPage from './pages/StudentAIPage';
+import StudentStatsPage from './pages/StudentStatsPage';
+import StudentSurveysPage from './pages/StudentSurveysPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
@@ -53,6 +62,16 @@ const App: React.FC = () => {
                   <>
                     <Route path="/my-courses" element={<MyCoursesPage />} />
                     <Route path="/my-grades" element={<ComingSoon featureName="My Grades" />} />
+                    <Route path="/student-profile" element={<StudentProfilePage />} />
+                    <Route path="/student-schedule" element={<StudentSchedulePage />} />
+                    <Route path="/student-evaluations" element={<StudentEvaluationsPage />} />
+                    <Route path="/student-resources" element={<StudentResourcesPage />} />
+                    <Route path="/student-messages" element={<StudentMessagesPage />} />
+                    <Route path="/student-admin" element={<StudentAdminPage />} />
+                    <Route path="/student-activities" element={<StudentActivitiesPage />} />
+                    <Route path="/student-ai" element={<StudentAIPage />} />
+                    <Route path="/student-stats" element={<StudentStatsPage />} />
+                    <Route path="/student-surveys" element={<StudentSurveysPage />} />
                   </>
                 )}
 

@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { NAV_ITEMS, APP_NAME, ICONS } from '../../constants';
+import { NAV_ITEMS, APP_NAME, ICONS, ROUTES } from '../../constants';
 import { UserRole } from '../../types';
 
 interface SidebarProps {
@@ -53,3 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 };
 
 export default Sidebar;
+
+// Añadir al menú los nuevos módulos del estudiante
+// El menú ya usa NAV_ITEMS, que ahora incluye los módulos avanzados del estudiante según el rol.
+// No se requiere más acción en Sidebar, ya que filtra por roles automáticamente.
