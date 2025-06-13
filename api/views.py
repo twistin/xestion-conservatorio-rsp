@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.db.models import Count
 from datetime import timedelta
+import os
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -355,3 +356,45 @@ def ia_professor_faq(request):
         if k in question:
             return Response({'answer': v})
     return Response({'answer': 'No se encontró una respuesta automática. Por favor, contacta con administración.'})
+
+# --- IA Revisión de documentación (simulada) ---
+from rest_framework.parsers import MultiPartParser
+from django.core.files.uploadedfile import UploadedFile
+
+@api_view(['POST'])
+def ia_document_review(request):
+    file = request.FILES.get('file')
+    if not file:
+        return Response({'result': 'No se recibió ningún archivo.'}, status=400)
+    # Simulación: validación por extensión y tamaño
+    ext = os.path.splitext(file.name)[1].lower()
+    if ext not in ['.pdf', '.jpg', '.jpeg', '.png']:
+        return Response({'result': 'Formato no válido. Solo se aceptan PDF o imagen.'})
+    if file.size > 2 * 1024 * 1024:
+        return Response({'result': 'El archivo supera el tamaño máximo permitido (2MB).'})
+    # Simulación de validación de firma
+    if 'firma' in file.name.lower():
+        return Response({'result': 'Documento válido y firmado correctamente.'})
+    return Response({'result': 'Documento recibido. No se detectó firma digital.'})
+
+# --- IA Generador de informes automáticos (simulado) ---
+from datetime import date
+
+@api_view(['GET'])
+def ia_generate_report(request):
+    # Simulación de informe mensual
+    today = date.today()
+    month = today.month
+    year = today.year
+    # Datos simulados
+    report = {
+        'month': month,
+        'year': year,
+        'new_enrollments': 12,
+        'total_attendance': 95,  # %
+        'incidents': 2,
+        'payments_processed': 18,
+        'documents_reviewed': 7,
+        'notes': 'Actividad estable. Sin incidencias graves. Buen nivel de asistencia.'
+    }
+    return Response({'report': report})

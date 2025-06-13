@@ -492,3 +492,33 @@ export const askProfessorFAQ = async (question: string): Promise<{answer: string
   if (!res.ok) throw new Error('Error al consultar el asistente IA');
   return await res.json();
 };
+
+export const reviewDocumentIA = async (file: File): Promise<{result: string}> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`${API_BASE}/ia/document-review/`, {
+    method: 'POST',
+    body: formData
+  });
+  if (!res.ok) throw new Error('Error al revisar el documento IA');
+  return await res.json();
+};
+
+export interface IAReport {
+  report: {
+    month: number;
+    year: number;
+    new_enrollments: number;
+    total_attendance: number;
+    incidents: number;
+    payments_processed: number;
+    documents_reviewed: number;
+    notes: string;
+  };
+}
+
+export const getIAReport = async (): Promise<IAReport> => {
+  const res = await fetch(`${API_BASE}/ia/generate-report/`);
+  if (!res.ok) throw new Error('Error al generar el informe IA');
+  return await res.json();
+};

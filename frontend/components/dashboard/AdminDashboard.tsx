@@ -31,6 +31,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const [isScheduleOptLoading, setIsScheduleOptLoading] = useState(true);
   const [demandPrediction, setDemandPrediction] = useState<dataService.IADemandPrediction | null>(null);
   const [isDemandPredictionLoading, setIsDemandPredictionLoading] = useState(true);
+  const [iaReport, setIaReport] = useState<dataService.IAReport | null>(null);
+  const [isIaReportLoading, setIsIaReportLoading] = useState(true);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -77,6 +79,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
       .then(setDemandPrediction)
       .catch(() => setDemandPrediction(null))
       .finally(() => setIsDemandPredictionLoading(false));
+  }, []);
+
+  useEffect(() => {
+    setIsIaReportLoading(true);
+    dataService.getIAReport()
+      .then(setIaReport)
+      .catch(() => setIaReport(null))
+      .finally(() => setIsIaReportLoading(false));
   }, []);
 
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];
@@ -189,6 +199,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             </ul>
           ) : (
             <div className="text-sm text-status-red">No se pudo cargar la predicción IA.</div>
+          )}
+        </Card>
+        <Card title="Informe Mensual IA" className="lg:col-span-1">
+          {isIaReportLoading ? (
+            <div className="h-32 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div>
+          ) : iaReport ? (
+            <div className="text-sm space-y-1">
+              <div><b>Mes:</b> {iaReport.report.month}/{iaReport.report.year}</div>
+              <div><b>Nuevas matrículas:</b> {iaReport.report.new_enrollments}</div>
+              <div><b>Asistencia media:</b> {iaReport.report.total_attendance}%</div>
+              <div><b>Incidencias:</b> {iaReport.report.incidents}</div>
+              <div><b>Pagos procesados:</b> {iaReport.report.payments_processed}</div>
+              <div><b>Documentos revisados:</b> {iaReport.report.documents_reviewed}</div>
+              <div className="mt-2 text-neutral-medium"><b>Notas:</b> {iaReport.report.notes}</div>
+            </div>
+          ) : (
+            <div className="text-sm text-status-red">No se pudo generar el informe IA.</div>
           )}
         </Card>
       </div>
