@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { User } from '../../types';
 import PageContainer from '../layout/PageContainer';
@@ -9,6 +8,7 @@ import Card from '../ui/Card';
 import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { mockEnrollments } from '../../services/mockData';
 
 
 interface AdminDashboardProps {
@@ -47,12 +47,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
 
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];
 
-  // Sample data for chart
-  const enrollmentChartData = [
-    { name: 'Xan', enrollments: 65 }, { name: 'Feb', enrollments: 59 },
-    { name: 'Mar', enrollments: 80 }, { name: 'Abr', enrollments: 81 },
-    { name: 'Mai', enrollments: 56 }, { name: 'Xuñ', enrollments: 55 },
-  ];
+  // Agrupar matrículas por año
+  const enrollmentsByYear: Record<string, number> = {};
+  mockEnrollments.forEach((e) => {
+    const year = new Date(e.enrollmentDate).getFullYear();
+    enrollmentsByYear[year] = (enrollmentsByYear[year] || 0) + 1;
+  });
+  const enrollmentChartData = Object.entries(enrollmentsByYear).map(([year, count]) => ({ name: year, enrollments: count }));
   
   const quickLinks = [
     { label: "Xestionar Alumnado", href: ROUTES.students, icon: ICONS.students },
@@ -72,20 +73,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <Card title="Matrículas Mensuais" className="lg:col-span-2">
+        <Card title="Matrículas Anuais" className="lg:col-span-2">
           {isLoading ? <div className="h-64 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div> : (
              <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={enrollmentChartData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-neutral-medium" />
                   <XAxis dataKey="name" tick={{ fill: 'currentColor', fontSize: 12 }} className="text-neutral-medium dark:text-gray-400" />
                   <YAxis tick={{ fill: 'currentColor', fontSize: 12 }} className="text-neutral-medium dark:text-gray-400" />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: 'rgba(255,255,255,0.8)', darkBackgroundColor: 'rgba(0,0,0,0.8)', borderRadius: '0.5rem', borderColor: '#cbd5e0' }}
-                    labelStyle={{ color: '#1F2937', darkColor: '#E5E7EB' }}
-                    formatter={(value: number) => [value, "Matrículas"]}
-                  />
-                  <Legend wrapperStyle={{fontSize: "12px"}} payload={[{ value: 'Matrículas', type: 'square', color: 'var(--color-primary)' }]} />
-                  <Bar dataKey="enrollments" fill="var(--color-primary)" radius={[4, 4, 0, 0]} barSize={30} name="Matrículas" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="enrollments" fill="#2563eb" name="Matrículas" />
                 </BarChart>
               </ResponsiveContainer>
           )}
