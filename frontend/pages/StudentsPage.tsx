@@ -135,6 +135,9 @@ const StudentsPage: React.FC = () => {
           <Button variant="ghost" size="sm" onClick={() => handleDeleteStudent(student.id)} className="text-status-red hover:bg-red-100" title="Eliminar">
             <i className={ICONS.delete}></i>
           </Button>
+          <Button variant="ghost" size="sm" onClick={() => { setSelectedStudent(student); setShowFichaModal(true); }} title="Ver ficha">
+            <i className="fa-solid fa-address-card"></i>
+          </Button>
         </div>
       ),
     },
