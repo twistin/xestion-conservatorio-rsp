@@ -3,13 +3,11 @@ import PageContainer from '../components/layout/PageContainer';
 import Table from '../components/ui/Table';
 import Button from '../components/ui/Button';
 import Spinner from '../components/ui/Spinner';
-import EmptyState from '../components/ui/EmptyState';
 import StudentForm from '../components/students/StudentForm';
 import Modal from '../components/ui/Modal';
-import { Student, Instrument, UserRole, TableColumn, Course, Professor, Enrollment, Grade } from '../types';
+import { Student, Instrument, TableColumn, Course, Professor, Enrollment, Grade } from '../types';
 import * as dataService from '../services/dataService';
 import { ICONS } from '../constants';
-// Importar CRUD real desde la carpeta services (fuera de frontend)
 import { createStudent, updateStudent, deleteStudent } from '../../services/dataService';
 
 // ErrorBoundary local para evitar pantallas en branco
@@ -85,7 +83,7 @@ const StudentsPage: React.FC = () => {
 
   // Baja de estudiante
   const handleDeleteStudent = async (id: string) => {
-    if (!window.confirm('¿Seguro que deseas dar de baja este alumno/a?')) return;
+    if (!window.confirm('¿Seguro que deseas dar de baixa este alumno/a?')) return;
     try {
       await deleteStudent(id);
       setSelectedStudent(null);
@@ -93,7 +91,7 @@ const StudentsPage: React.FC = () => {
       const updated = await dataService.getStudents();
       setStudents(updated);
     } catch (e) {
-      alert('Error al dar de baja al alumno/a');
+      alert('Error al dar de baixa al alumno/a');
     }
   };
 
