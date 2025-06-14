@@ -112,6 +112,9 @@ const ProfessorsPage: React.FC = () => {
           <Button variant="ghost" size="sm" onClick={() => handleDeleteProfessor(prof.id)} className="text-status-red hover:bg-red-100" title="Eliminar">
             <i className={ICONS.delete}></i>
           </Button>
+          <Button variant="ghost" size="sm" onClick={() => { setSelectedProfessor(prof); setShowEditForm(false); setIsModalOpen(true); }} title="Ver ficha">
+            <i className="fa-solid fa-address-card"></i>
+          </Button>
         </div>
       ),
     },
