@@ -46,6 +46,7 @@ const StudentsPage: React.FC = () => {
   const [professors, setProfessors] = useState<Professor[]>([]);
   const [grades, setGrades] = useState<Grade[]>([]);
   const [instrument, setInstrument] = useState<Instrument | null>(null);
+  const [showFichaModal, setShowFichaModal] = useState(false);
 
   const fetchStudentsAndInstruments = useCallback(async () => {
     setIsLoading(true);
@@ -201,7 +202,10 @@ const StudentsPage: React.FC = () => {
           columns={columns}
           data={students}
           isLoading={isLoading}
-          onRowClick={student => setSelectedStudent(student)}
+          onRowClick={student => {
+            setSelectedStudent(student);
+            setShowFichaModal(true);
+          }}
           searchableKeys={['firstName', 'lastName', 'email']}
         />
         {/* Modal de alta de estudiante */}
@@ -217,8 +221,8 @@ const StudentsPage: React.FC = () => {
           </Modal>
         )}
         {/* Ficha individual del estudiante */}
-        {selectedStudent && studentDetails && (
-          <Modal isOpen={!!selectedStudent} onClose={() => setSelectedStudent(null)} title={`Ficha de ${studentDetails.firstName} ${studentDetails.lastName}`}>
+        {showFichaModal && selectedStudent && studentDetails && (
+          <Modal isOpen={showFichaModal} onClose={() => { setShowFichaModal(false); setSelectedStudent(null); }} title={`Ficha de ${studentDetails.firstName} ${studentDetails.lastName}`}>
             <h2 className="text-xl font-bold mb-2">Ficha de {studentDetails.firstName} {studentDetails.lastName}</h2>
             {/* Datos personales */}
             <div className="mb-4">

@@ -65,7 +65,12 @@ const CoursesPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleEditCourse = (course: Course) => {
+  const handleEditCourse = (course: Course | undefined | null) => {
+    if (!course) {
+      console.warn('handleEditCourse: curso no definido', course);
+      return;
+    }
+    console.log('Abriendo modal para curso:', course);
     setSelectedCourse(course);
     setIsModalOpen(true);
   };
