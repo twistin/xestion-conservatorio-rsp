@@ -23,4 +23,5 @@ urlpatterns = [
     path('ia/document-review/', views.ia_document_review, name='ia_document_review'),
     path('ia/generate-report/', views.ia_generate_report, name='ia_generate_report'),
     path('ia/resources-suggestions/', views.ia_resources_suggestions, name='ia_resources_suggestions'),
+    path('ia/generate-family-message/', views.ia_generate_family_message, name='ia_generate_family_message'),
 ]

@@ -418,3 +418,18 @@ def ia_resources_suggestions(request):
     if not suggestions:
         suggestions.append('No se encontraron sugerencias específicas. Prueba con otro tema o instrumento.')
     return Response({'suggestions': suggestions})
+
+# --- IA Generación automática de mensajes a familias (simulado) ---
+@api_view(['POST'])
+def ia_generate_family_message(request):
+    motivo = request.data.get('motivo', '').lower()
+    alumno = request.data.get('alumno', 'el alumno/a')
+    if 'ausencia' in motivo:
+        mensaje = f"Estimadas familias, les informamos que {alumno} ha estado ausente en la última clase. Por favor, contacten con el centro si necesitan aclaraciones."
+    elif 'felicitación' in motivo or 'felicitacion' in motivo:
+        mensaje = f"¡Enhorabuena! {alumno} ha mostrado un progreso destacado. Les animamos a seguir apoyando su aprendizaje."
+    elif 'reunión' in motivo or 'reunion' in motivo:
+        mensaje = f"Les recordamos la próxima reunión de tutores. Su asistencia es importante para el seguimiento académico de {alumno}."
+    else:
+        mensaje = f"Mensaje automático generado para {alumno} por el motivo: {motivo}."
+    return Response({'mensaje': mensaje})

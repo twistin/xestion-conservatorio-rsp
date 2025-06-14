@@ -532,3 +532,13 @@ export const getResourceSuggestionsIA = async (params: {level?: string, instrume
   if (!res.ok) throw new Error('Error al obtener sugerencias IA');
   return await res.json();
 };
+
+export const generateFamilyMessageIA = async (motivo: string, alumno: string): Promise<{mensaje: string}> => {
+  const res = await fetch(`${API_BASE}/ia/generate-family-message/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ motivo, alumno })
+  });
+  if (!res.ok) throw new Error('Error al generar el mensaje IA');
+  return await res.json();
+};

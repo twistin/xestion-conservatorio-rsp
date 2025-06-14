@@ -8,12 +8,6 @@ const ProfessorResourcesPage: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [level, setLevel] = useState('');
-  const [instrument, setInstrument] = useState('');
-  const [topic, setTopic] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isSuggesting, setIsSuggesting] = useState(false);
-  const [suggestionError, setSuggestionError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files?.[0] || null);
@@ -37,6 +31,14 @@ const ProfessorResourcesPage: React.FC = () => {
     }
   };
 
+  // --- Recursos Didácticos IA interactivo ---
+  const [level, setLevel] = useState('');
+  const [instrument, setInstrument] = useState('');
+  const [topic, setTopic] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [suggestionError, setSuggestionError] = useState<string | null>(null);
+
   const handleSuggest = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSuggesting(true);
@@ -49,6 +51,28 @@ const ProfessorResourcesPage: React.FC = () => {
       setSuggestionError('Error al obtener sugerencias IA.');
     } finally {
       setIsSuggesting(false);
+    }
+  };
+
+  // --- Mensajes automáticos IA a familias ---
+  const [motivo, setMotivo] = useState('');
+  const [alumno, setAlumno] = useState('');
+  const [mensajeIA, setMensajeIA] = useState<string | null>(null);
+  const [isMsgLoading, setIsMsgLoading] = useState(false);
+  const [msgError, setMsgError] = useState<string | null>(null);
+
+  const handleMsgIA = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsMsgLoading(true);
+    setMensajeIA(null);
+    setMsgError(null);
+    try {
+      const res = await dataService.generateFamilyMessageIA(motivo, alumno);
+      setMensajeIA(res.mensaje);
+    } catch {
+      setMsgError('Error al generar el mensaje IA.');
+    } finally {
+      setIsMsgLoading(false);
     }
   };
 
@@ -78,7 +102,7 @@ const ProfessorResourcesPage: React.FC = () => {
           Solo se aceptan archivos PDF o imagen (máx. 2MB). Si el nombre contiene "firma", se validará como firmado.
         </div>
       </Card>
-      {/* Espacio para recursos didácticos IA */}
+      {/* --- Recursos Didácticos IA interactivo --- */}
       <Card title="Recursos Didácticos IA" className="max-w-xl mx-auto mt-8">
         <form onSubmit={handleSuggest} className="space-y-3 mb-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -98,6 +122,27 @@ const ProfessorResourcesPage: React.FC = () => {
         )}
         <div className="mt-4 text-xs text-neutral-medium">
           Introduce un tema, instrumento o nivel para recibir sugerencias automáticas de materiales y recursos.
+        </div>
+      </Card>
+      {/* --- Mensajes automáticos IA a familias --- */}
+      <Card title="Generador Automático de Mensajes a Familias (IA)" className="max-w-xl mx-auto mt-8">
+        <form onSubmit={handleMsgIA} className="space-y-3 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <input type="text" className="border rounded px-2 py-1" placeholder="Nombre del alumno/a" value={alumno} onChange={e => setAlumno(e.target.value)} required />
+            <input type="text" className="border rounded px-2 py-1" placeholder="Motivo (ausencia, felicitación, reunión...)" value={motivo} onChange={e => setMotivo(e.target.value)} required />
+          </div>
+          <Button type="submit" variant="primary" disabled={isMsgLoading || !motivo || !alumno}>
+            {isMsgLoading ? 'Generando...' : 'Generar Mensaje IA'}
+          </Button>
+        </form>
+        {msgError && <div className="p-2 bg-red-50 border border-red-200 rounded text-red-900 mb-2">{msgError}</div>}
+        {mensajeIA && (
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded text-blue-900">
+            <b>Mensaje generado:</b> {mensajeIA}
+          </div>
+        )}
+        <div className="mt-4 text-xs text-neutral-medium">
+          Escribe el nombre del alumno/a y el motivo para obtener un mensaje automático listo para enviar a las familias.
         </div>
       </Card>
     </>
