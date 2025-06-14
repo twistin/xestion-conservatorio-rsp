@@ -134,10 +134,10 @@ const CoursesPage: React.FC = () => {
       header: 'Accións',
       render: (course) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="sm" onClick={() => handleEditCourse(course)} title="Editar">
+          <Button variant="ghost" size="sm" onClick={e => { e.stopPropagation(); handleEditCourse(course); }} title="Editar">
             <i className={ICONS.edit}></i>
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => handleDeleteCourse(course.id)} className="text-status-red hover:bg-red-100" title="Eliminar">
+          <Button variant="ghost" size="sm" onClick={e => { e.stopPropagation(); handleDeleteCourse(course.id); }} className="text-status-red hover:bg-red-100" title="Eliminar">
             <i className={ICONS.delete}></i>
           </Button>
         </div>
