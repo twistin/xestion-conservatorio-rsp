@@ -117,17 +117,17 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, instruments, onSave,
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input label="Nome" name="firstName" value={formData.firstName || ''} onChange={handleChange} error={errors.firstName} required />
-        <Input label="Apelidos" name="lastName" value={formData.lastName || ''} onChange={handleChange} error={errors.lastName} required />
+        <Input label="Nome" name="firstName" id="student-firstName" autoComplete="given-name" value={formData.firstName || ''} onChange={handleChange} error={errors.firstName} required />
+        <Input label="Apelidos" name="lastName" id="student-lastName" autoComplete="family-name" value={formData.lastName || ''} onChange={handleChange} error={errors.lastName} required />
       </div>
-      <Input label="Correo Electrónico" name="email" type="email" value={formData.email || ''} onChange={handleChange} error={errors.email} required />
+      <Input label="Correo Electrónico" name="email" id="student-email" type="email" autoComplete="email" value={formData.email || ''} onChange={handleChange} error={errors.email} required />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input label="Data de Nacemento" name="dateOfBirth" type="date" value={formData.dateOfBirth || ''} onChange={handleChange} error={errors.dateOfBirth} required />
-        <Select label="Instrumento" name="instrumentId" options={instrumentOptions} value={formData.instrumentId || ''} onChange={handleChange} error={errors.instrumentId} placeholder="Seleccione un instrumento" required />
+        <Input label="Data de Nacemento" name="dateOfBirth" id="student-dateOfBirth" type="date" autoComplete="bday" value={formData.dateOfBirth || ''} onChange={handleChange} error={errors.dateOfBirth} required />
+        <Select label="Instrumento" name="instrumentId" id="student-instrumentId" options={instrumentOptions} value={formData.instrumentId || ''} onChange={handleChange} error={errors.instrumentId} placeholder="Seleccione un instrumento" required autoComplete="off" />
       </div>
-      <Input label="Data de Matrícula" name="enrollmentDate" type="date" value={formData.enrollmentDate || ''} onChange={handleChange} error={errors.enrollmentDate} required />
-      <Input label="Enderezo (Opcional)" name="address" value={formData.address || ''} onChange={handleChange} />
-      <Input label="Número de Teléfono (Opcional)" name="phoneNumber" type="tel" value={formData.phoneNumber || ''} onChange={handleChange} />
+      <Input label="Data de Matrícula" name="enrollmentDate" id="student-enrollmentDate" type="date" autoComplete="off" value={formData.enrollmentDate || ''} onChange={handleChange} error={errors.enrollmentDate} required />
+      <Input label="Enderezo (Opcional)" name="address" id="student-address" autoComplete="street-address" value={formData.address || ''} onChange={handleChange} />
+      <Input label="Número de Teléfono (Opcional)" name="phoneNumber" id="student-phoneNumber" type="tel" autoComplete="tel" value={formData.phoneNumber || ''} onChange={handleChange} />
       
       <div className="flex justify-end space-x-3 pt-4">
         <Button type="button" variant="outline" onClick={onCancel}>Cancelar</Button>

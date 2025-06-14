@@ -47,6 +47,7 @@ const StudentsPage: React.FC = () => {
   const [grades, setGrades] = useState<Grade[]>([]);
   const [instrument, setInstrument] = useState<Instrument | null>(null);
   const [showFichaModal, setShowFichaModal] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchStudentsAndInstruments = useCallback(async () => {
     setIsLoading(true);
@@ -157,8 +158,16 @@ const StudentsPage: React.FC = () => {
   useEffect(() => {
     if (!selectedStudent) return;
     let isMounted = true;
+    setLoadError(null); // Resetear error al abrir modal
+    setStudentDetails(null); // Resetear detalles para mostrar spinner
+    setEnrollments([]);
+    setCourses([]);
+    setProfessors([]);
+    setGrades([]);
+    setInstrument(null);
     (async () => {
       try {
+        console.log('[MODAL] Cargando datos de ficha para', selectedStudent.id);
         const [student, enrollmentsData, allCourses, allProfessors, instr] = await Promise.all([
           dataService.getStudentById(selectedStudent.id),
           dataService.getEnrollmentsByStudentId(selectedStudent.id),
@@ -178,13 +187,16 @@ const StudentsPage: React.FC = () => {
         setProfessors(allProfessors);
         setGrades(allGrades);
         setInstrument(instr || null);
+        setLoadError(null);
       } catch (e) {
+        console.error('[MODAL] Error cargando ficha:', e);
         setStudentDetails(null);
         setEnrollments([]);
         setCourses([]);
         setProfessors([]);
         setGrades([]);
         setInstrument(null);
+        setLoadError('No se pudo cargar la ficha del alumno.');
       }
     })();
     return () => { isMounted = false; };
@@ -230,8 +242,13 @@ const StudentsPage: React.FC = () => {
         )}
         {/* Ficha individual del estudiante */}
         {showFichaModal && selectedStudent && (
-          <Modal isOpen={showFichaModal} onClose={() => { setShowFichaModal(false); setSelectedStudent(null); }} title={studentDetails ? `Ficha de ${studentDetails.firstName} ${studentDetails.lastName}` : 'Cargando ficha...'}>
-            {!studentDetails ? (
+          <Modal isOpen={showFichaModal} onClose={() => { setShowFichaModal(false); setSelectedStudent(null); }} title={studentDetails ? `Ficha de ${studentDetails.firstName} ${studentDetails.lastName}` : loadError ? 'Error al cargar ficha' : 'Cargando ficha...'}>
+            {loadError ? (
+              <div className="flex flex-col items-center justify-center min-h-[200px] text-red-600">
+                <b>{loadError}</b>
+                <div className="mt-2 text-xs">Intenta recargar la página o revisa la conexión.</div>
+              </div>
+            ) : !studentDetails ? (
               <div className="flex flex-col items-center justify-center min-h-[200px]">
                 <Spinner message="Cargando datos del alumno..." />
               </div>
