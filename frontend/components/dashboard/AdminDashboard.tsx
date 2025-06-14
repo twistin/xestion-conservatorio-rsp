@@ -33,10 +33,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const [isDemandPredictionLoading, setIsDemandPredictionLoading] = useState(true);
   const [iaReport, setIaReport] = useState<dataService.IAReport | null>(null);
   const [isIaReportLoading, setIsIaReportLoading] = useState(true);
+  // Estado IA: sincronizar con backend/config además de localStorage
   const [iaEnabled, setIaEnabled] = useState(() => {
     const stored = localStorage.getItem('iaEnabled');
     return stored ? stored === 'true' : true;
   });
+
+  // Sincronizar con backend al cargar
+  useEffect(() => {
+    // Intentar obtener el estado global del backend
+    fetch('/api/config/ia_enabled/')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && typeof data.ia_enabled === 'boolean') {
+          setIaEnabled(data.ia_enabled);
+          localStorage.setItem('iaEnabled', String(data.ia_enabled));
+        }
+      })
+      .catch(() => {}); // Silenciar errores si no existe endpoint
+  }, []);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -93,11 +108,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
       .finally(() => setIsIaReportLoading(false));
   }, []);
 
-  const handleToggleIA = () => {
+  const handleToggleIA = async () => {
     const newValue = !iaEnabled;
     setIaEnabled(newValue);
     localStorage.setItem('iaEnabled', String(newValue));
-    // Aquí podrías disparar lógica adicional para alternar endpoints reales/mock si lo deseas
+    // Guardar en backend/config si existe endpoint
+    try {
+      await fetch('/api/config/ia_enabled/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ia_enabled: newValue })
+      });
+    } catch {}
   };
 
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];

@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.db.models import Count
 from datetime import timedelta
 import os
+import json
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -433,3 +434,27 @@ def ia_generate_family_message(request):
     else:
         mensaje = f"Mensaje automático generado para {alumno} por el motivo: {motivo}."
     return Response({'mensaje': mensaje})
+
+import json
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config_ia.json')
+
+@csrf_exempt
+@api_view(['GET', 'POST'])
+def config_ia_enabled(request):
+    # Lee o escribe el estado global de la IA administrativa
+    if request.method == 'GET':
+        try:
+            with open(CONFIG_PATH, 'r') as f:
+                data = json.load(f)
+            ia_enabled = data.get('ia_enabled', True)
+        except Exception:
+            ia_enabled = True
+        return Response({'ia_enabled': ia_enabled})
+    elif request.method == 'POST':
+        try:
+            ia_enabled = request.data.get('ia_enabled', True)
+            with open(CONFIG_PATH, 'w') as f:
+                json.dump({'ia_enabled': ia_enabled}, f)
+            return Response({'ia_enabled': ia_enabled})
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
