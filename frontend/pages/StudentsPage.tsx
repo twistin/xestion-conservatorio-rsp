@@ -201,7 +201,7 @@ const StudentsPage: React.FC = () => {
           columns={columns}
           data={students}
           isLoading={isLoading}
-          onRowClick={setSelectedStudent}
+          onRowClick={student => setSelectedStudent(student)}
           searchableKeys={['firstName', 'lastName', 'email']}
         />
         {/* Modal de alta de estudiante */}
