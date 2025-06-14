@@ -183,6 +183,9 @@ const CoursesPage: React.FC = () => {
         )}
 
         {isModalOpen && (
+          (() => { console.log('Render modal:', { isModalOpen, selectedCourse }); return null; })()
+        )}
+        {isModalOpen && (
           <Modal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
