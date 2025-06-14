@@ -173,7 +173,12 @@ const StudentsPage: React.FC = () => {
           dataService.getEnrollmentsByStudentId(selectedStudent.id).catch(e => {console.error('[MODAL] Error getEnrollmentsByStudentId', e); throw e;}),
           dataService.getCourses().catch(e => {console.error('[MODAL] Error getCourses', e); throw e;}),
           dataService.getProfessors().catch(e => {console.error('[MODAL] Error getProfessors', e); throw e;}),
-          selectedStudent.instrumentId ? dataService.getInstrumentById(selectedStudent.instrumentId).catch(e => {console.error('[MODAL] Error getInstrumentById', e); throw e;}) : Promise.resolve(null)
+          selectedStudent.instrumentId
+            ? dataService.getInstrumentById(selectedStudent.instrumentId).catch(e => {
+                console.error('[MODAL] Error getInstrumentById', e);
+                return null; // Fallback: no interrumpe la ficha si el instrumento no existe
+              })
+            : Promise.resolve(null)
         ]);
         let allGrades: Grade[] = [];
         if (enrollmentsData.length > 0) {
