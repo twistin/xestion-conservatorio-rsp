@@ -229,6 +229,9 @@ const StudentsPage: React.FC = () => {
           </Modal>
         )}
         {/* Ficha individual del estudiante */}
+        {showFichaModal && (
+          (() => { console.log('RENDER MODAL FICHA', { showFichaModal, selectedStudent, studentDetails }); return null; })()
+        )}
         {showFichaModal && selectedStudent && studentDetails && (
           <Modal isOpen={showFichaModal} onClose={() => { setShowFichaModal(false); setSelectedStudent(null); }} title={`Ficha de ${studentDetails.firstName} ${studentDetails.lastName}`}>
             <h2 className="text-xl font-bold mb-2">Ficha de {studentDetails.firstName} {studentDetails.lastName}</h2>
