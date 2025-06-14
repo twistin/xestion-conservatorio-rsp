@@ -9,6 +9,7 @@ import { ICONS } from '../constants';
 import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
 import ProfessorForm from '../components/professors/ProfessorForm';
+import ProfessorFicha from '../components/professors/ProfessorFicha';
 
 // ErrorBoundary local para evitar pantallas en blanco
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
@@ -38,6 +39,7 @@ const ProfessorsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfessor, setSelectedProfessor] = useState<Professor | null>(null);
+  const [showEditForm, setShowEditForm] = useState(false);
 
   const fetchProfessors = useCallback(async () => {
     setIsLoading(true);
@@ -62,6 +64,7 @@ const ProfessorsPage: React.FC = () => {
 
   const handleEditProfessor = (prof: Professor) => {
     setSelectedProfessor(prof);
+    setShowEditForm(false);
     setIsModalOpen(true);
   };
 
@@ -85,6 +88,7 @@ const ProfessorsPage: React.FC = () => {
       }
       fetchProfessors();
       setIsModalOpen(false);
+      setShowEditForm(false);
     } catch (error) {
       console.error('Erro ao gardar profesor/a:', error);
     }
@@ -153,15 +157,29 @@ const ProfessorsPage: React.FC = () => {
         {isModalOpen && (
           <Modal
             isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            title={selectedProfessor ? 'Editar Profesor/a' : 'Engadir Novo/a Profesor/a'}
+            onClose={() => { setIsModalOpen(false); setShowEditForm(false); }}
+            title={selectedProfessor && !showEditForm ? `Ficha de ${selectedProfessor.firstName} ${selectedProfessor.lastName}` : selectedProfessor ? 'Editar Profesor/a' : 'Engadir Novo/a Profesor/a'}
             size="lg"
           >
-            <ProfessorForm
-              professor={selectedProfessor}
-              onSave={handleSaveProfessor}
-              onCancel={() => setIsModalOpen(false)}
-            />
+            {selectedProfessor && !showEditForm ? (
+              <>
+                <ProfessorFicha professor={selectedProfessor} />
+                <div className="flex justify-end gap-2 mt-4 border-t pt-4">
+                  <Button variant="primary" onClick={() => setIsModalOpen(false)}>
+                    Pechar
+                  </Button>
+                  <Button variant="secondary" onClick={() => setShowEditForm(true)}>
+                    Editar
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <ProfessorForm
+                professor={selectedProfessor}
+                onSave={handleSaveProfessor}
+                onCancel={() => { setShowEditForm(false); setIsModalOpen(false); }}
+              />
+            )}
           </Modal>
         )}
       </PageContainer>
