@@ -2,13 +2,15 @@ import React, { useEffect, useState, useCallback } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import Table from '../components/ui/Table';
 import Button from '../components/ui/Button';
-import Modal from '../components/ui/Modal';
-import { Student, Instrument, UserRole, TableColumn } from '../types';
-import * as dataService from '../services/dataService';
-import { ICONS } from '../constants';
-import StudentForm from '../components/students/StudentForm'; 
 import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
+import StudentForm from '../components/students/StudentForm';
+import Modal from '../components/ui/Modal';
+import { Student, Instrument, UserRole, TableColumn, Course, Professor, Enrollment, Grade } from '../types';
+import * as dataService from '../services/dataService';
+import { ICONS } from '../constants';
+// Importar CRUD real desde la carpeta services (fuera de frontend)
+import { createStudent, updateStudent, deleteStudent } from '../../services/dataService';
 
 // ErrorBoundary local para evitar pantallas en branco
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
@@ -37,8 +39,16 @@ const StudentsPage: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [editStudent, setEditStudent] = useState<Student | null>(null);
+  const [studentDetails, setStudentDetails] = useState<Student | null>(null);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [professors, setProfessors] = useState<Professor[]>([]);
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [instrument, setInstrument] = useState<Instrument | null>(null);
 
   const fetchStudentsAndInstruments = useCallback(async () => {
     setIsLoading(true);
@@ -60,41 +70,51 @@ const StudentsPage: React.FC = () => {
     fetchStudentsAndInstruments();
   }, [fetchStudentsAndInstruments]);
 
-  const handleAddStudent = () => {
-    setSelectedStudent(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEditStudent = (student: Student) => {
-    setSelectedStudent(student);
-    setIsModalOpen(true);
-  };
-
-  const handleDeleteStudent = async (studentId: string) => {
-    if (window.confirm('Está seguro/a de que quere eliminar este/a alumno/a?')) {
-      try {
-        await dataService.deleteItem(studentId, 'student');
-        fetchStudentsAndInstruments(); 
-      } catch (error) {
-        console.error("Erro ao eliminar alumno/a:", error);
-      }
-    }
-  };
-  
-  const handleSaveStudent = async (studentData: Student) => {
+  // Alta de estudiante
+  const handleSaveStudent = async (studentData: Partial<Student>) => {
     try {
-      if (selectedStudent) {
-        await dataService.updateItem(studentData, 'student');
-      } else {
-        await dataService.addItem(studentData, 'student');
-      }
-      fetchStudentsAndInstruments(); 
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Erro ao gardar alumno/a:", error);
+      await createStudent(studentData);
+      setShowAddModal(false);
+      // Refrescar lista
+      const updated = await dataService.getStudents();
+      setStudents(updated);
+    } catch (e) {
+      alert('Error al crear alumno/a');
     }
   };
 
+  // Baja de estudiante
+  const handleDeleteStudent = async (id: string) => {
+    if (!window.confirm('¿Seguro que deseas dar de baja este alumno/a?')) return;
+    try {
+      await deleteStudent(id);
+      setSelectedStudent(null);
+      // Refrescar lista
+      const updated = await dataService.getStudents();
+      setStudents(updated);
+    } catch (e) {
+      alert('Error al dar de baja al alumno/a');
+    }
+  };
+
+  // Edición de estudiante
+  const handleEditStudent = (student: Student) => {
+    setEditStudent(student);
+    setShowEditModal(true);
+  };
+  const handleUpdateStudent = async (studentData: Partial<Student>) => {
+    if (!editStudent) return;
+    try {
+      await updateStudent(editStudent.id, studentData);
+      setShowEditModal(false);
+      setEditStudent(null);
+      // Refrescar lista
+      const updated = await dataService.getStudents();
+      setStudents(updated);
+    } catch (e) {
+      alert('Error al actualizar alumno/a');
+    }
+  };
 
   const columns: TableColumn<Student>[] = [
     { key: 'firstName', header: 'Nome' },
@@ -127,6 +147,43 @@ const StudentsPage: React.FC = () => {
     { label: 'Alumnado', current: true },
   ];
 
+  // Cargar datos reales al seleccionar estudiante
+  useEffect(() => {
+    if (!selectedStudent) return;
+    let isMounted = true;
+    (async () => {
+      try {
+        const [student, enrollmentsData, allCourses, allProfessors, instr] = await Promise.all([
+          dataService.getStudentById(selectedStudent.id),
+          dataService.getEnrollmentsByStudentId(selectedStudent.id),
+          dataService.getCourses(),
+          dataService.getProfessors(),
+          selectedStudent.instrumentId ? dataService.getInstrumentById(selectedStudent.instrumentId) : Promise.resolve(null)
+        ]);
+        let allGrades: Grade[] = [];
+        if (enrollmentsData.length > 0) {
+          const gradesArrays = await Promise.all(enrollmentsData.map(e => dataService.getGradesByEnrollmentId(e.id)));
+          allGrades = gradesArrays.flat();
+        }
+        if (!isMounted) return;
+        setStudentDetails(student || null);
+        setEnrollments(enrollmentsData);
+        setCourses(allCourses);
+        setProfessors(allProfessors);
+        setGrades(allGrades);
+        setInstrument(instr || null);
+      } catch (e) {
+        setStudentDetails(null);
+        setEnrollments([]);
+        setCourses([]);
+        setProfessors([]);
+        setGrades([]);
+        setInstrument(null);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, [selectedStudent]);
+
   if (isLoading && students.length === 0) { 
       return <Spinner fullPage message="Cargando alumnado..." />;
   }
@@ -137,41 +194,105 @@ const StudentsPage: React.FC = () => {
         title="Xestionar Alumnado"
         breadcrumbs={breadcrumbs}
         headerActions={
-          <Button onClick={handleAddStudent} iconLeft={ICONS.add}>
+          <Button onClick={() => setShowAddModal(true)} iconLeft={ICONS.add}>
             Engadir Alumno/a
           </Button>
         }
       >
-        { !isLoading && students.length === 0 ? (
-          <EmptyState 
-            icon={ICONS.students}
-            title="Non se atopou alumnado"
-            description="Comece engadindo o seu primeiro alumno/a."
-            action={<Button onClick={handleAddStudent} iconLeft={ICONS.add}>Engadir Alumno/a</Button>}
-          />
-        ) : (
-          <Table<Student>
-              columns={columns}
-              data={students}
-              isLoading={isLoading} 
-              onRowClick={handleEditStudent} 
-              searchableKeys={['firstName', 'lastName', 'email']}
-          />
+        {/* Listado de estudiantes */}
+        <Table<Student>
+          columns={columns}
+          data={students}
+          isLoading={isLoading}
+          onRowClick={setSelectedStudent}
+          searchableKeys={['firstName', 'lastName', 'email']}
+        />
+        {/* Modal de alta de estudiante */}
+        {showAddModal && (
+          <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Alta de Estudiante">
+            <StudentForm onSave={handleSaveStudent} onCancel={() => setShowAddModal(false)} instruments={instruments} />
+          </Modal>
         )}
-
-        {isModalOpen && (
-          <Modal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            title={selectedStudent ? 'Editar Alumno/a' : 'Engadir Novo/a Alumno/a'}
-            size="lg"
-          >
-            <StudentForm 
-              student={selectedStudent} 
-              instruments={instruments}
-              onSave={handleSaveStudent} 
-              onCancel={() => setIsModalOpen(false)} 
-            />
+        {/* Modal de edición de estudiante */}
+        {showEditModal && editStudent && (
+          <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Editar Estudiante">
+            <StudentForm student={editStudent} onSave={handleUpdateStudent} onCancel={() => setShowEditModal(false)} instruments={instruments} />
+          </Modal>
+        )}
+        {/* Ficha individual del estudiante */}
+        {selectedStudent && studentDetails && (
+          <Modal isOpen={!!selectedStudent} onClose={() => setSelectedStudent(null)} title={`Ficha de ${studentDetails.firstName} ${studentDetails.lastName}`}>
+            <h2 className="text-xl font-bold mb-2">Ficha de {studentDetails.firstName} {studentDetails.lastName}</h2>
+            {/* Datos personales */}
+            <div className="mb-4">
+              <b>Datos personales:</b>
+              <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                <li>Email: {studentDetails.email || <span className="italic">No especificado</span>}</li>
+                <li>Teléfono: {studentDetails.phoneNumber || <span className="italic">No especificado</span>}</li>
+                <li>Fecha de nacimiento: {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">No especificada</span>}</li>
+                <li>Instrumento: {instrument?.name || <span className="italic">No especificado</span>}</li>
+                <li>Dirección: {studentDetails.address || <span className="italic">No especificada</span>}</li>
+              </ul>
+            </div>
+            {/* Matrículas activas */}
+            <div className="mb-4">
+              <b>Matrículas activas:</b>
+              <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                {enrollments.filter(e => e.status === 'Active').length === 0 ? <li>No hay matrículas activas</li> :
+                  enrollments.filter(e => e.status === 'Active').map(e => {
+                    const course = courses.find(c => c.id === e.courseId);
+                    return <li key={e.id}>{course?.name || 'Curso desconocido'} ({new Date(e.enrollmentDate).toLocaleDateString()})</li>;
+                  })}
+              </ul>
+            </div>
+            {/* Asignación a cursos y profesores */}
+            <div className="mb-4">
+              <b>Cursos y profesores asignados:</b>
+              <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                {enrollments.length === 0 ? <li>No hay asignaciones</li> :
+                  enrollments.map(e => {
+                    const course = courses.find(c => c.id === e.courseId);
+                    const prof = course && course.teacherId ? professors.find(p => p.id === course.teacherId) : null;
+                    return <li key={e.id}>{course?.name || 'Curso desconocido'} - {prof ? `${prof.firstName} ${prof.lastName}` : 'Profesor/a N/D'}</li>;
+                  })}
+              </ul>
+            </div>
+            {/* Historial académico y seguimiento */}
+            <div className="mb-4">
+              <b>Historial académico:</b>
+              <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                {enrollments.filter(e => e.status !== 'Active').length === 0 ? <li>No hay historial académico</li> :
+                  enrollments.filter(e => e.status !== 'Active').map(e => {
+                    const course = courses.find(c => c.id === e.courseId);
+                    return <li key={e.id}>{course?.name || 'Curso desconocido'} ({e.status})</li>;
+                  })}
+              </ul>
+            </div>
+            <div className="mb-4">
+              <b>Progreso y calificaciones:</b>
+              <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                {enrollments.length === 0 ? <li>No hay calificaciones</li> :
+                  enrollments.map(e => {
+                    const enrollmentGrades = grades.filter(g => g.enrollmentId === e.id);
+                    if (enrollmentGrades.length === 0) return <li key={e.id}>Sin calificaciones para {courses.find(c => c.id === e.courseId)?.name || 'curso'}</li>;
+                    return (
+                      <li key={e.id}>
+                        <b>{courses.find(c => c.id === e.courseId)?.name || 'Curso'}:</b>
+                        <ul className="ml-4">
+                          {enrollmentGrades.map(g => (
+                            <li key={g.id}>{g.assignmentName}: {g.score}/100 ({new Date(g.dateGiven).toLocaleDateString()}) {g.comments && <span>- {g.comments}</span>}</li>
+                          ))}
+                        </ul>
+                      </li>
+                    );
+                  })}
+              </ul>
+            </div>
+            {/* Botones de acción */}
+            <div className="flex justify-end mt-4">
+              <Button variant="danger" onClick={() => handleDeleteStudent(studentDetails.id)}>Dar de baixa</Button>
+              <Button variant="primary" className="ml-2" onClick={() => handleEditStudent(studentDetails)}>Editar</Button>
+            </div>
           </Modal>
         )}
       </PageContainer>
