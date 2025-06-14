@@ -229,72 +229,77 @@ const StudentsPage: React.FC = () => {
           </Modal>
         )}
         {/* Ficha individual del estudiante */}
-        {showFichaModal && (
-          (() => { console.log('RENDER MODAL FICHA', { showFichaModal, selectedStudent, studentDetails }); return null; })()
-        )}
-        {showFichaModal && selectedStudent && studentDetails && (
-          <Modal isOpen={showFichaModal} onClose={() => { setShowFichaModal(false); setSelectedStudent(null); }} title={`Ficha de ${studentDetails.firstName} ${studentDetails.lastName}`}>
-            <h2 className="text-xl font-bold mb-2">Ficha de {studentDetails.firstName} {studentDetails.lastName}</h2>
-            {/* Datos personales */}
-            <div className="mb-4">
-              <b>Datos personales:</b>
-              <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                <li>Email: {studentDetails.email || <span className="italic">No especificado</span>}</li>
-                <li>Teléfono: {studentDetails.phoneNumber || <span className="italic">No especificado</span>}</li>
-                <li>Fecha de nacimiento: {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">No especificada</span>}</li>
-                <li>Instrumento: {instrument?.name || <span className="italic">No especificado</span>}</li>
-                <li>Dirección: {studentDetails.address || <span className="italic">No especificada</span>}</li>
-              </ul>
-            </div>
-            {/* Matrículas activas */}
-            <div className="mb-4">
-              <b>Matrículas activas:</b>
-              <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                {enrollments.filter(e => e.status === 'Active').length === 0 ? <li>No hay matrículas activas</li> :
-                  enrollments.filter(e => e.status === 'Active').map(e => {
-                    const course = courses.find(c => c.id === e.courseId);
-                    return <li key={e.id}>{course?.name || 'Curso desconocido'} ({new Date(e.enrollmentDate).toLocaleDateString()})</li>;
-                  })}
-              </ul>
-            </div>
-            {/* Asignación a cursos y profesores */}
-            <div className="mb-4">
-              <b>Cursos y profesores asignados:</b>
-              <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                {enrollments.length === 0 ? <li>No hay asignaciones</li> :
-                  enrollments.map(e => {
-                    const course = courses.find(c => c.id === e.courseId);
-                    const prof = course && course.teacherId ? professors.find(p => p.id === course.teacherId) : null;
-                    return <li key={e.id}>{course?.name || 'Curso desconocido'} - {prof ? `${prof.firstName} ${prof.lastName}` : 'Profesor/a N/D'}</li>;
-                  })}
-              </ul>
-            </div>
-            {/* Seguimiento del progreso */}
-            <div className="mb-4">
-              <b>Seguimiento del progreso:</b>
-              <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                {enrollments.length === 0 ? <li>No hay calificaciones</li> :
-                  enrollments.map(e => {
-                    const enrollmentGrades = grades.filter(g => g.enrollmentId === e.id);
-                    if (enrollmentGrades.length === 0) return <li key={e.id}>Sin calificaciones para {courses.find(c => c.id === e.courseId)?.name || 'curso'}</li>;
-                    return (
-                      <li key={e.id}>
-                        <b>{courses.find(c => c.id === e.courseId)?.name || 'Curso'}:</b>
-                        <ul className="ml-4">
-                          {enrollmentGrades.slice(0,3).map(g => (
-                            <li key={g.id}>{g.assignmentName}: {g.score}/100 ({new Date(g.dateGiven).toLocaleDateString()}) {g.comments && <span>- {g.comments}</span>}</li>
-                          ))}
-                        </ul>
-                      </li>
-                    );
-                  })}
-              </ul>
-            </div>
-            {/* Botones de acción */}
-            <div className="flex justify-end mt-4">
-              <Button variant="danger" onClick={() => handleDeleteStudent(studentDetails.id)}>Dar de baixa</Button>
-              <Button variant="primary" className="ml-2" onClick={() => handleEditStudent(studentDetails)}>Editar</Button>
-            </div>
+        {showFichaModal && selectedStudent && (
+          <Modal isOpen={showFichaModal} onClose={() => { setShowFichaModal(false); setSelectedStudent(null); }} title={studentDetails ? `Ficha de ${studentDetails.firstName} ${studentDetails.lastName}` : 'Cargando ficha...'}>
+            {!studentDetails ? (
+              <div className="flex flex-col items-center justify-center min-h-[200px]">
+                <Spinner message="Cargando datos del alumno..." />
+              </div>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold mb-2">Ficha de {studentDetails.firstName} {studentDetails.lastName}</h2>
+                {/* Datos personales */}
+                <div className="mb-4">
+                  <b>Datos personales:</b>
+                  <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                    <li>Email: {studentDetails.email || <span className="italic">No especificado</span>}</li>
+                    <li>Teléfono: {studentDetails.phoneNumber || <span className="italic">No especificado</span>}</li>
+                    <li>Fecha de nacimiento: {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">No especificada</span>}</li>
+                    <li>Instrumento: {instrument?.name || <span className="italic">No especificado</span>}</li>
+                    <li>Dirección: {studentDetails.address || <span className="italic">No especificada</span>}</li>
+                  </ul>
+                </div>
+                {/* Matrículas activas */}
+                <div className="mb-4">
+                  <b>Matrículas activas:</b>
+                  <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                    {enrollments.filter(e => e.status === 'Active').length === 0 ? <li>No hay matrículas activas</li> :
+                      enrollments.filter(e => e.status === 'Active').map(e => {
+                        const course = courses.find(c => c.id === e.courseId);
+                        return <li key={e.id}>{course?.name || 'Curso desconocido'} ({new Date(e.enrollmentDate).toLocaleDateString()})</li>;
+                      })}
+                  </ul>
+                </div>
+                {/* Asignación a cursos y profesores */}
+                <div className="mb-4">
+                  <b>Cursos y profesores asignados:</b>
+                  <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                    {enrollments.length === 0 ? <li>No hay asignaciones</li> :
+                      enrollments.map(e => {
+                        const course = courses.find(c => c.id === e.courseId);
+                        const prof = course && course.teacherId ? professors.find(p => p.id === course.teacherId) : null;
+                        return <li key={e.id}>{course?.name || 'Curso desconocido'} - {prof ? `${prof.firstName} ${prof.lastName}` : 'Profesor/a N/D'}</li>;
+                      })}
+                  </ul>
+                </div>
+                {/* Seguimiento del progreso */}
+                <div className="mb-4">
+                  <b>Seguimiento del progreso:</b>
+                  <ul className="text-neutral-medium text-sm ml-4 mt-1">
+                    {enrollments.length === 0 ? <li>No hay calificaciones</li> :
+                      enrollments.map(e => {
+                        const enrollmentGrades = grades.filter(g => g.enrollmentId === e.id);
+                        if (enrollmentGrades.length === 0) return <li key={e.id}>Sin calificaciones para {courses.find(c => c.id === e.courseId)?.name || 'curso'}</li>;
+                        return (
+                          <li key={e.id}>
+                            <b>{courses.find(c => c.id === e.courseId)?.name || 'Curso'}:</b>
+                            <ul className="ml-4">
+                              {enrollmentGrades.slice(0,3).map(g => (
+                                <li key={g.id}>{g.assignmentName}: {g.score}/100 ({new Date(g.dateGiven).toLocaleDateString()}) {g.comments && <span>- {g.comments}</span>}</li>
+                              ))}
+                            </ul>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                </div>
+                {/* Botones de acción */}
+                <div className="flex justify-end mt-4">
+                  <Button variant="danger" onClick={() => handleDeleteStudent(studentDetails.id)}>Dar de baixa</Button>
+                  <Button variant="primary" className="ml-2" onClick={() => handleEditStudent(studentDetails)}>Editar</Button>
+                </div>
+              </>
+            )}
           </Modal>
         )}
       </PageContainer>
