@@ -259,9 +259,9 @@ const StudentsPage: React.FC = () => {
               </div>
             ) : (
               <>
-                {/* FICHA MEJORADA */}
+                {/* FICHA MELLORADA EN GALEGO */}
                 <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow p-6">
-                  {/* Encabezado con avatar y nombre */}
+                  {/* Encabezado con avatar e nome */}
                   <div className="flex items-center gap-4 mb-6 border-b pb-4">
                     <div className="flex-shrink-0">
                       <div className="w-16 h-16 rounded-full bg-blue-200 flex items-center justify-center text-3xl text-blue-700 shadow-inner">
@@ -269,51 +269,51 @@ const StudentsPage: React.FC = () => {
                       </div>
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-blue-900 mb-1">{studentDetails.firstName} {studentDetails.lastName}</h2>
+                      <h2 className="text-2xl font-bold text-blue-900 mb-1">Ficha de {studentDetails.firstName} {studentDetails.lastName}</h2>
                       <div className="text-sm text-neutral-medium">ID: {studentDetails.id}</div>
                     </div>
                   </div>
-                  {/* Datos personales */}
+                  {/* Datos persoais */}
                   <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col gap-2">
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-envelope text-blue-400"></i> <span className="font-medium">Email:</span> {studentDetails.email || <span className="italic">No especificado</span>}</div>
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-phone text-blue-400"></i> <span className="font-medium">Teléfono:</span> {studentDetails.phoneNumber || <span className="italic">No especificado</span>}</div>
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-cake-candles text-blue-400"></i> <span className="font-medium">Nacimiento:</span> {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">No especificada</span>}</div>
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-music text-blue-400"></i> <span className="font-medium">Instrumento:</span> {instrument?.name || <span className="italic">No especificado</span>}</div>
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-location-dot text-blue-400"></i> <span className="font-medium">Dirección:</span> {studentDetails.address || <span className="italic">No especificada</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-envelope text-blue-400"></i> <span className="font-medium">Correo electrónico:</span> {studentDetails.email || <span className="italic">Non especificado</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-phone text-blue-400"></i> <span className="font-medium">Teléfono:</span> {studentDetails.phoneNumber || <span className="italic">Non especificado</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-cake-candles text-blue-400"></i> <span className="font-medium">Data de nacemento:</span> {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">Non especificada</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-music text-blue-400"></i> <span className="font-medium">Instrumento:</span> {instrument?.name || <span className="italic">Non especificado</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-location-dot text-blue-400"></i> <span className="font-medium">Enderezo:</span> {studentDetails.address || <span className="italic">Non especificado</span>}</div>
                     </div>
                   </div>
                   {/* Matrículas activas */}
                   <div className="mb-6">
                     <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-graduation-cap"></i> Matrículas activas</div>
                     <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
-                      {enrollments.filter(e => e.status === 'Active').length === 0 ? <li>No hay matrículas activas</li> :
+                      {enrollments.filter(e => e.status === 'Active').length === 0 ? <li>Non hai matrículas activas</li> :
                         enrollments.filter(e => e.status === 'Active').map(e => {
                           const course = courses.find(c => c.id === e.courseId);
-                          return <li key={e.id}>{course?.name || 'Curso desconocido'} <span className="text-xs text-neutral-medium">({new Date(e.enrollmentDate).toLocaleDateString()})</span></li>;
+                          return <li key={e.id}>{course?.name || 'Curso descoñecido'} <span className="text-xs text-neutral-medium">({new Date(e.enrollmentDate).toLocaleDateString()})</span></li>;
                         })}
                     </ul>
                   </div>
-                  {/* Asignación a cursos y profesores */}
+                  {/* Asignación a cursos e profesores */}
                   <div className="mb-6">
-                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-chalkboard-user"></i> Cursos y profesores asignados</div>
+                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-chalkboard-user"></i> Cursos e profesorado asignado</div>
                     <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
-                      {enrollments.length === 0 ? <li>No hay asignaciones</li> :
+                      {enrollments.length === 0 ? <li>Non hai asignacións</li> :
                         enrollments.map(e => {
                           const course = courses.find(c => c.id === e.courseId);
                           const prof = course && course.teacherId ? professors.find(p => p.id === course.teacherId) : null;
-                          return <li key={e.id}>{course?.name || 'Curso desconocido'} - {prof ? `${prof.firstName} ${prof.lastName}` : 'Profesor/a N/D'}</li>;
+                          return <li key={e.id}>{course?.name || 'Curso descoñecido'} - {prof ? `${prof.firstName} ${prof.lastName}` : 'Profesor/a N/D'}</li>;
                         })}
                     </ul>
                   </div>
-                  {/* Seguimiento del progreso */}
+                  {/* Seguimento do progreso */}
                   <div className="mb-6">
-                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-chart-line"></i> Seguimiento del progreso</div>
+                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-chart-line"></i> Seguimento do progreso</div>
                     <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
-                      {enrollments.length === 0 ? <li>No hay calificaciones</li> :
+                      {enrollments.length === 0 ? <li>Non hai cualificacións</li> :
                         enrollments.map(e => {
                           const enrollmentGrades = grades.filter(g => g.enrollmentId === e.id);
-                          if (enrollmentGrades.length === 0) return <li key={e.id}>Sin calificaciones para {courses.find(c => c.id === e.courseId)?.name || 'curso'}</li>;
+                          if (enrollmentGrades.length === 0) return <li key={e.id}>Sen cualificacións para {courses.find(c => c.id === e.courseId)?.name || 'curso'}</li>;
                           return (
                             <li key={e.id} className="mb-2">
                               <b>{courses.find(c => c.id === e.courseId)?.name || 'Curso'}:</b>
@@ -330,7 +330,7 @@ const StudentsPage: React.FC = () => {
                         })}
                     </ul>
                   </div>
-                  {/* Botones de acción */}
+                  {/* Botóns de acción */}
                   <div className="flex justify-end gap-2 mt-4 border-t pt-4">
                     <Button variant="danger" onClick={() => handleDeleteStudent(studentDetails.id)}>
                       <i className="fa-solid fa-user-xmark mr-2"></i> Dar de baixa
