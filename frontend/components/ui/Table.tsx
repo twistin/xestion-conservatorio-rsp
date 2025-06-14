@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { TableColumn, SelectOption } from '../../types';
 import { PAGINATION_DEFAULT_PAGE_SIZE, ICONS } from '../../constants';
@@ -17,6 +16,8 @@ interface TableProps<T extends { id: string | number }> {
 const Table = <T extends { id: string | number }>(
   { columns, data, isLoading, onRowClick, searchableKeys, defaultPageSize = PAGINATION_DEFAULT_PAGE_SIZE }: TableProps<T>
 ) => {
+  console.log('Table render: onRowClick está', typeof onRowClick);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
   const [searchTerm, setSearchTerm] = useState('');
@@ -117,7 +118,10 @@ const Table = <T extends { id: string | number }>(
                 <tr 
                   key={item.id} 
                   className={`${onRowClick ? 'cursor-pointer hover:bg-neutral-light dark:hover:bg-neutral-dark' : ''}`}
-                  onClick={() => onRowClick?.(item)}
+                  onClick={() => {
+                    console.log('Fila clicada:', item);
+                    onRowClick?.(item);
+                  }}
                 >
                   {columns.map((col) => (
                     <td key={`${item.id}-${String(col.key)}`} className="px-6 py-4 whitespace-nowrap text-sm text-neutral-dark dark:text-neutral-light">
