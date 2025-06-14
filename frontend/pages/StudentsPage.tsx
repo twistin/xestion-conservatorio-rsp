@@ -169,15 +169,15 @@ const StudentsPage: React.FC = () => {
       try {
         console.log('[MODAL] Cargando datos de ficha para', selectedStudent.id);
         const [student, enrollmentsData, allCourses, allProfessors, instr] = await Promise.all([
-          dataService.getStudentById(selectedStudent.id),
-          dataService.getEnrollmentsByStudentId(selectedStudent.id),
-          dataService.getCourses(),
-          dataService.getProfessors(),
-          selectedStudent.instrumentId ? dataService.getInstrumentById(selectedStudent.instrumentId) : Promise.resolve(null)
+          dataService.getStudentById(selectedStudent.id).catch(e => {console.error('[MODAL] Error getStudentById', e); throw e;}),
+          dataService.getEnrollmentsByStudentId(selectedStudent.id).catch(e => {console.error('[MODAL] Error getEnrollmentsByStudentId', e); throw e;}),
+          dataService.getCourses().catch(e => {console.error('[MODAL] Error getCourses', e); throw e;}),
+          dataService.getProfessors().catch(e => {console.error('[MODAL] Error getProfessors', e); throw e;}),
+          selectedStudent.instrumentId ? dataService.getInstrumentById(selectedStudent.instrumentId).catch(e => {console.error('[MODAL] Error getInstrumentById', e); throw e;}) : Promise.resolve(null)
         ]);
         let allGrades: Grade[] = [];
         if (enrollmentsData.length > 0) {
-          const gradesArrays = await Promise.all(enrollmentsData.map(e => dataService.getGradesByEnrollmentId(e.id)));
+          const gradesArrays = await Promise.all(enrollmentsData.map(e => dataService.getGradesByEnrollmentId(e.id).catch(err => {console.error('[MODAL] Error getGradesByEnrollmentId', e.id, err); return [];})));
           allGrades = gradesArrays.flat();
         }
         if (!isMounted) return;
