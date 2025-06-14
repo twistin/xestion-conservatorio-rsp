@@ -216,10 +216,27 @@ export const getAttendanceByEnrollmentId = async (enrollmentId: string): Promise
 // Generic add/update/delete
 export const addItem = async <T extends {id?: string}>(item: Omit<T, 'id'>, type: string): Promise<T> => {
   if (type === 'student') {
+    // Solo los campos requeridos y en snake_case
+    const snakeCaseStudent: any = {
+      user_id: (item as any).user_id || (item as any).userId,
+      first_name: (item as any).first_name || (item as any).firstName,
+      last_name: (item as any).last_name || (item as any).lastName,
+      email: (item as any).email,
+      date_of_birth: (item as any).date_of_birth || (item as any).dateOfBirth,
+      instrument_id: (item as any).instrument_id || (item as any).instrumentId,
+      enrollment_date: (item as any).enrollment_date || (item as any).enrollmentDate,
+    };
+    if ((item as any).address) snakeCaseStudent.address = (item as any).address;
+    if ((item as any).phone_number || (item as any).phoneNumber) snakeCaseStudent.phone_number = (item as any).phone_number || (item as any).phoneNumber;
+    Object.keys(snakeCaseStudent).forEach(key => {
+      if (snakeCaseStudent[key] === undefined || snakeCaseStudent[key] === null || snakeCaseStudent[key] === '') {
+        delete snakeCaseStudent[key];
+      }
+    });
     const res = await fetch(`${API_BASE}/students/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(item)
+      body: JSON.stringify(snakeCaseStudent)
     });
     if (!res.ok) throw new Error('Error al crear alumno/a');
     return res.json();
