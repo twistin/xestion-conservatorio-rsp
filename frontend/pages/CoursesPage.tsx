@@ -7,6 +7,7 @@ import { Course, Professor, CourseLevel, TableColumn, SelectOption } from '../ty
 import * as dataService from '../services/dataService';
 import { ICONS } from '../constants';
 import CourseForm from '../components/courses/CourseForm';
+import CourseFicha from '../components/courses/CourseFicha';
 import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
 
@@ -39,6 +40,7 @@ const CoursesPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [showEditForm, setShowEditForm] = useState(false);
 
   const fetchCoursesAndProfessors = useCallback(async () => {
     setIsLoading(true);
@@ -70,8 +72,8 @@ const CoursesPage: React.FC = () => {
       console.warn('handleEditCourse: curso no definido', course);
       return;
     }
-    console.log('Abriendo modal para curso:', course);
     setSelectedCourse(course);
+    setShowEditForm(false);
     setIsModalOpen(true);
   };
 
@@ -140,6 +142,9 @@ const CoursesPage: React.FC = () => {
           <Button variant="ghost" size="sm" onClick={e => { e.stopPropagation(); handleDeleteCourse(course.id); }} className="text-status-red hover:bg-red-100" title="Eliminar">
             <i className={ICONS.delete}></i>
           </Button>
+          <Button variant="ghost" size="sm" onClick={e => { e.stopPropagation(); setSelectedCourse(course); setShowEditForm(false); setIsModalOpen(true); }} title="Ver ficha">
+            <i className="fa-solid fa-address-card"></i>
+          </Button>
         </div>
       ),
     },
@@ -185,19 +190,33 @@ const CoursesPage: React.FC = () => {
         {isModalOpen && (
           (() => { console.log('Render modal:', { isModalOpen, selectedCourse }); return null; })()
         )}
-        {isModalOpen && (
+        {isModalOpen && selectedCourse && (
           <Modal
             isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            title={selectedCourse ? 'Editar Curso' : 'Engadir Novo Curso'}
+            onClose={() => { setIsModalOpen(false); setShowEditForm(false); }}
+            title={selectedCourse && !showEditForm ? `Ficha de ${selectedCourse.name}` : selectedCourse ? 'Editar Curso' : 'Engadir Novo Curso'}
             size="lg"
           >
-            <CourseForm 
-              course={selectedCourse} 
-              professors={professors}
-              onSave={handleSaveCourse} 
-              onCancel={() => setIsModalOpen(false)} 
-            />
+            {selectedCourse && !showEditForm ? (
+              <>
+                <CourseFicha course={selectedCourse} professor={professors.find(p => p.id === selectedCourse.teacherId) || null} />
+                <div className="flex justify-end gap-2 mt-4 border-t pt-4">
+                  <Button variant="primary" onClick={() => setIsModalOpen(false)}>
+                    Pechar
+                  </Button>
+                  <Button variant="secondary" onClick={() => setShowEditForm(true)}>
+                    Editar
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <CourseForm 
+                course={selectedCourse} 
+                professors={professors}
+                onSave={handleSaveCourse} 
+                onCancel={() => { setShowEditForm(false); setIsModalOpen(false); }} 
+              />
+            )}
           </Modal>
         )}
       </PageContainer>
