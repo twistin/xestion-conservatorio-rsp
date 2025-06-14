@@ -52,3 +52,12 @@ class Observation(models.Model):
     date = models.DateField(auto_now_add=True)
     text = models.TextField()
     # Opcional: tipo, adjuntos, etc.
+
+class Enrollment(models.Model):
+    student = models.ForeignKey('Student', on_delete=models.CASCADE)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
+    enrollment_date = models.DateField()
+    status = models.CharField(max_length=50, default='Active')
+
+    def __str__(self):
+        return f"{self.student.first_name} {self.student.last_name} - {self.course.name} ({self.status})"

@@ -17,6 +17,7 @@ const Table = <T extends { id: string | number }>(
   { columns, data, isLoading, onRowClick, searchableKeys, defaultPageSize = PAGINATION_DEFAULT_PAGE_SIZE }: TableProps<T>
 ) => {
   console.log('Table render: onRowClick está', typeof onRowClick);
+  console.log('Table UI COMPONENT ACTIVADO');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
@@ -78,6 +79,7 @@ const Table = <T extends { id: string | number }>(
 
   return (
     <div className="bg-white dark:bg-dark-surface shadow-md rounded-lg overflow-hidden">
+      <div style={{background:'#ffeeba',color:'#856404',padding:'4px',textAlign:'center',fontWeight:'bold'}}>DEBUG TABLE COMPONENT</div>
       {searchableKeys && searchableKeys.length > 0 && (
         <div className="p-4 border-b dark:border-neutral-medium">
           <input

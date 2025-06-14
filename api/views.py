@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import viewsets, serializers
-from .models import Student, Professor, Course, Payment, Instrument, Observation
+from .models import Student, Professor, Course, Payment, Instrument, Observation, Enrollment
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
@@ -40,6 +40,11 @@ class InstrumentSerializer(serializers.ModelSerializer):
 class ObservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Observation
+        fields = '__all__'
+
+class EnrollmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Enrollment
         fields = '__all__'
 
 @csrf_exempt
@@ -458,3 +463,35 @@ def config_ia_enabled(request):
             return Response({'ia_enabled': ia_enabled})
         except Exception as e:
             return Response({'error': str(e)}, status=400)
+
+@csrf_exempt
+@api_view(['GET', 'POST'])
+def enrollments_list(request):
+    if request.method == 'GET':
+        enrollments = Enrollment.objects.all()
+        return Response(EnrollmentSerializer(enrollments, many=True).data)
+    elif request.method == 'POST':
+        serializer = EnrollmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
+def enrollment_detail(request, pk):
+    try:
+        enrollment = Enrollment.objects.get(pk=pk)
+    except Enrollment.DoesNotExist:
+        return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'GET':
+        return Response(EnrollmentSerializer(enrollment).data)
+    elif request.method == 'PUT':
+        serializer = EnrollmentSerializer(enrollment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        enrollment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

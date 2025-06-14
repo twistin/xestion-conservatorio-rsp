@@ -25,4 +25,6 @@ urlpatterns = [
     path('ia/resources-suggestions/', views.ia_resources_suggestions, name='ia_resources_suggestions'),
     path('ia/generate-family-message/', views.ia_generate_family_message, name='ia_generate_family_message'),
     path('config/ia_enabled/', views.config_ia_enabled, name='config_ia_enabled'),
+    path('enrollments/', views.enrollments_list, name='enrollments_list'),
+    path('enrollments/<int:pk>/', views.enrollment_detail, name='enrollment_detail'),
 ]
