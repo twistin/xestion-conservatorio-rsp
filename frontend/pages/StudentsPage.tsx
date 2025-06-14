@@ -136,9 +136,10 @@ const StudentsPage: React.FC = () => {
             <i className={ICONS.delete}></i>
           </Button>
           <Button variant="ghost" size="sm" onClick={() => {
+            console.log('CLICK VER FICHA', student);
             setSelectedStudent(student);
             setShowFichaModal(true);
-            setTimeout(() => window.scrollTo(0, 0), 100); // Forzar scroll arriba por si el modal está fuera de viewport
+            setTimeout(() => window.scrollTo(0, 0), 100);
           }} title="Ver ficha">
             <i className="fa-solid fa-address-card"></i>
           </Button>
