@@ -69,9 +69,21 @@ const StudentsPage: React.FC = () => {
   }, [fetchStudentsAndInstruments]);
 
   // Alta de estudiante
-  const handleSaveStudent = async (studentData: Partial<Student>) => {
+  const handleSaveStudent = async (studentData: any) => {
+    // Filtrar e transformar a snake_case por robustez
+    const snakeCaseStudent = {
+      user_id: studentData.user_id || studentData.userId,
+      first_name: studentData.first_name || studentData.firstName,
+      last_name: studentData.last_name || studentData.lastName,
+      email: studentData.email,
+      date_of_birth: studentData.date_of_birth || studentData.dateOfBirth,
+      instrument_id: studentData.instrument_id || studentData.instrumentId,
+      enrollment_date: studentData.enrollment_date || studentData.enrollmentDate,
+      address: studentData.address,
+      phone_number: studentData.phone_number || studentData.phoneNumber,
+    };
     try {
-      await createStudent(studentData);
+      await createStudent(snakeCaseStudent);
       setShowAddModal(false);
       // Refrescar lista
       const updated = await dataService.getStudents();

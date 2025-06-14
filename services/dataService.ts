@@ -1,5 +1,6 @@
 // Si usas axios, descomenta la siguiente línea:
 // import axios from 'axios';
+import { Student, Professor, Course, Payment } from '../frontend/types';
 
 export const getHelloMessage = async (): Promise<string> => {
   // Puedes usar fetch o axios. Aquí con fetch:
@@ -34,17 +35,29 @@ export const getPayments = async () => {
 };
 
 // --- CRUD para alumnado ---
-export const createStudent = async (student) => {
+export const createStudent = async (student: any) => {
+  // Solo los campos esperados y en snake_case
+  const snakeCaseStudent = {
+    user_id: student.user_id || student.userId,
+    first_name: student.first_name || student.firstName,
+    last_name: student.last_name || student.lastName,
+    email: student.email,
+    date_of_birth: student.date_of_birth || student.dateOfBirth,
+    instrument_id: student.instrument_id || student.instrumentId,
+    enrollment_date: student.enrollment_date || student.enrollmentDate,
+    address: student.address,
+    phone_number: student.phone_number || student.phoneNumber,
+  };
   const res = await fetch('http://localhost:8000/api/students/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(student)
+    body: JSON.stringify(snakeCaseStudent)
   });
   if (!res.ok) throw new Error('Error al crear alumno/a');
   return await res.json();
 };
 
-export const updateStudent = async (id, student) => {
+export const updateStudent = async (id: string, student: any) => {
   const res = await fetch(`http://localhost:8000/api/students/${id}/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -54,7 +67,7 @@ export const updateStudent = async (id, student) => {
   return await res.json();
 };
 
-export const deleteStudent = async (id) => {
+export const deleteStudent = async (id: string) => {
   const res = await fetch(`http://localhost:8000/api/students/${id}/`, {
     method: 'DELETE'
   });
@@ -62,7 +75,7 @@ export const deleteStudent = async (id) => {
 };
 
 // --- CRUD para profesorado ---
-export const createProfessor = async (professor) => {
+export const createProfessor = async (professor: any) => {
   const res = await fetch('http://localhost:8000/api/professors/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -72,7 +85,7 @@ export const createProfessor = async (professor) => {
   return await res.json();
 };
 
-export const updateProfessor = async (id, professor) => {
+export const updateProfessor = async (id: string, professor: any) => {
   const res = await fetch(`http://localhost:8000/api/professors/${id}/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -82,7 +95,7 @@ export const updateProfessor = async (id, professor) => {
   return await res.json();
 };
 
-export const deleteProfessor = async (id) => {
+export const deleteProfessor = async (id: string) => {
   const res = await fetch(`http://localhost:8000/api/professors/${id}/`, {
     method: 'DELETE'
   });
@@ -90,7 +103,7 @@ export const deleteProfessor = async (id) => {
 };
 
 // --- CRUD para cursos ---
-export const createCourse = async (course) => {
+export const createCourse = async (course: any) => {
   const res = await fetch('http://localhost:8000/api/courses/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -100,7 +113,7 @@ export const createCourse = async (course) => {
   return await res.json();
 };
 
-export const updateCourse = async (id, course) => {
+export const updateCourse = async (id: string, course: any) => {
   const res = await fetch(`http://localhost:8000/api/courses/${id}/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -110,7 +123,7 @@ export const updateCourse = async (id, course) => {
   return await res.json();
 };
 
-export const deleteCourse = async (id) => {
+export const deleteCourse = async (id: string) => {
   const res = await fetch(`http://localhost:8000/api/courses/${id}/`, {
     method: 'DELETE'
   });
@@ -118,7 +131,7 @@ export const deleteCourse = async (id) => {
 };
 
 // --- CRUD para pagos ---
-export const createPayment = async (payment) => {
+export const createPayment = async (payment: any) => {
   const res = await fetch('http://localhost:8000/api/payments/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -128,7 +141,7 @@ export const createPayment = async (payment) => {
   return await res.json();
 };
 
-export const updatePayment = async (id, payment) => {
+export const updatePayment = async (id: string, payment: any) => {
   const res = await fetch(`http://localhost:8000/api/payments/${id}/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -138,7 +151,7 @@ export const updatePayment = async (id, payment) => {
   return await res.json();
 };
 
-export const deletePayment = async (id) => {
+export const deletePayment = async (id: string) => {
   const res = await fetch(`http://localhost:8000/api/payments/${id}/`, {
     method: 'DELETE'
   });
