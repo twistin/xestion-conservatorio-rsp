@@ -259,69 +259,89 @@ const StudentsPage: React.FC = () => {
               </div>
             ) : (
               <>
-                <h2 className="text-xl font-bold mb-2">Ficha de {studentDetails.firstName} {studentDetails.lastName}</h2>
-                {/* Datos personales */}
-                <div className="mb-4">
-                  <b>Datos personales:</b>
-                  <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                    <li>Email: {studentDetails.email || <span className="italic">No especificado</span>}</li>
-                    <li>Teléfono: {studentDetails.phoneNumber || <span className="italic">No especificado</span>}</li>
-                    <li>Fecha de nacimiento: {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">No especificada</span>}</li>
-                    <li>Instrumento: {instrument?.name || <span className="italic">No especificado</span>}</li>
-                    <li>Dirección: {studentDetails.address || <span className="italic">No especificada</span>}</li>
-                  </ul>
-                </div>
-                {/* Matrículas activas */}
-                <div className="mb-4">
-                  <b>Matrículas activas:</b>
-                  <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                    {enrollments.filter(e => e.status === 'Active').length === 0 ? <li>No hay matrículas activas</li> :
-                      enrollments.filter(e => e.status === 'Active').map(e => {
-                        const course = courses.find(c => c.id === e.courseId);
-                        return <li key={e.id}>{course?.name || 'Curso desconocido'} ({new Date(e.enrollmentDate).toLocaleDateString()})</li>;
-                      })}
-                  </ul>
-                </div>
-                {/* Asignación a cursos y profesores */}
-                <div className="mb-4">
-                  <b>Cursos y profesores asignados:</b>
-                  <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                    {enrollments.length === 0 ? <li>No hay asignaciones</li> :
-                      enrollments.map(e => {
-                        const course = courses.find(c => c.id === e.courseId);
-                        const prof = course && course.teacherId ? professors.find(p => p.id === course.teacherId) : null;
-                        return <li key={e.id}>{course?.name || 'Curso desconocido'} - {prof ? `${prof.firstName} ${prof.lastName}` : 'Profesor/a N/D'}</li>;
-                      })}
-                  </ul>
-                </div>
-                {/* Seguimiento del progreso */}
-                <div className="mb-4">
-                  <b>Seguimiento del progreso:</b>
-                  <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                    {enrollments.length === 0 ? <li>No hay calificaciones</li> :
-                      enrollments.map(e => {
-                        const enrollmentGrades = grades.filter(g => g.enrollmentId === e.id);
-                        if (enrollmentGrades.length === 0) return <li key={e.id}>Sin calificaciones para {courses.find(c => c.id === e.courseId)?.name || 'curso'}</li>;
-                        return (
-                          <li key={e.id}>
-                            <b>{courses.find(c => c.id === e.courseId)?.name || 'Curso'}:</b>
-                            <ul className="ml-4">
-                              {enrollmentGrades.slice(0,3).map(g => (
-                                <li key={g.id}>{g.assignmentName}: {g.score}/100 ({new Date(g.dateGiven).toLocaleDateString()}) {g.comments && <span>- {g.comments}</span>}</li>
-                              ))}
-                            </ul>
-                          </li>
-                        );
-                      })}
-                  </ul>
-                </div>
-                {/* Botones de acción */}
-                <div className="flex justify-end mt-4">
-                  <Button variant="danger" onClick={() => handleDeleteStudent(studentDetails.id)}>Dar de baixa</Button>
-                  <Button variant="primary" className="ml-2" onClick={() => {
-                    setShowFichaModal(false);
-                    handleEditStudent(studentDetails);
-                  }}>Editar</Button>
+                {/* FICHA MEJORADA */}
+                <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow p-6">
+                  {/* Encabezado con avatar y nombre */}
+                  <div className="flex items-center gap-4 mb-6 border-b pb-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 rounded-full bg-blue-200 flex items-center justify-center text-3xl text-blue-700 shadow-inner">
+                        <i className="fa-solid fa-user"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-blue-900 mb-1">{studentDetails.firstName} {studentDetails.lastName}</h2>
+                      <div className="text-sm text-neutral-medium">ID: {studentDetails.id}</div>
+                    </div>
+                  </div>
+                  {/* Datos personales */}
+                  <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col gap-2">
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-envelope text-blue-400"></i> <span className="font-medium">Email:</span> {studentDetails.email || <span className="italic">No especificado</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-phone text-blue-400"></i> <span className="font-medium">Teléfono:</span> {studentDetails.phoneNumber || <span className="italic">No especificado</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-cake-candles text-blue-400"></i> <span className="font-medium">Nacimiento:</span> {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">No especificada</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-music text-blue-400"></i> <span className="font-medium">Instrumento:</span> {instrument?.name || <span className="italic">No especificado</span>}</div>
+                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-location-dot text-blue-400"></i> <span className="font-medium">Dirección:</span> {studentDetails.address || <span className="italic">No especificada</span>}</div>
+                    </div>
+                  </div>
+                  {/* Matrículas activas */}
+                  <div className="mb-6">
+                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-graduation-cap"></i> Matrículas activas</div>
+                    <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
+                      {enrollments.filter(e => e.status === 'Active').length === 0 ? <li>No hay matrículas activas</li> :
+                        enrollments.filter(e => e.status === 'Active').map(e => {
+                          const course = courses.find(c => c.id === e.courseId);
+                          return <li key={e.id}>{course?.name || 'Curso desconocido'} <span className="text-xs text-neutral-medium">({new Date(e.enrollmentDate).toLocaleDateString()})</span></li>;
+                        })}
+                    </ul>
+                  </div>
+                  {/* Asignación a cursos y profesores */}
+                  <div className="mb-6">
+                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-chalkboard-user"></i> Cursos y profesores asignados</div>
+                    <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
+                      {enrollments.length === 0 ? <li>No hay asignaciones</li> :
+                        enrollments.map(e => {
+                          const course = courses.find(c => c.id === e.courseId);
+                          const prof = course && course.teacherId ? professors.find(p => p.id === course.teacherId) : null;
+                          return <li key={e.id}>{course?.name || 'Curso desconocido'} - {prof ? `${prof.firstName} ${prof.lastName}` : 'Profesor/a N/D'}</li>;
+                        })}
+                    </ul>
+                  </div>
+                  {/* Seguimiento del progreso */}
+                  <div className="mb-6">
+                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-chart-line"></i> Seguimiento del progreso</div>
+                    <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
+                      {enrollments.length === 0 ? <li>No hay calificaciones</li> :
+                        enrollments.map(e => {
+                          const enrollmentGrades = grades.filter(g => g.enrollmentId === e.id);
+                          if (enrollmentGrades.length === 0) return <li key={e.id}>Sin calificaciones para {courses.find(c => c.id === e.courseId)?.name || 'curso'}</li>;
+                          return (
+                            <li key={e.id} className="mb-2">
+                              <b>{courses.find(c => c.id === e.courseId)?.name || 'Curso'}:</b>
+                              <ul className="ml-4">
+                                {enrollmentGrades.slice(0,3).map(g => (
+                                  <li key={g.id} className="flex items-center gap-2">
+                                    <i className="fa-solid fa-star text-yellow-400"></i>
+                                    <span>{g.assignmentName}: <b>{g.score}/100</b> <span className="text-xs text-neutral-medium">({new Date(g.dateGiven).toLocaleDateString()})</span> {g.comments && <span className="text-xs text-neutral-medium">- {g.comments}</span>}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </li>
+                          );
+                        })}
+                    </ul>
+                  </div>
+                  {/* Botones de acción */}
+                  <div className="flex justify-end gap-2 mt-4 border-t pt-4">
+                    <Button variant="danger" onClick={() => handleDeleteStudent(studentDetails.id)}>
+                      <i className="fa-solid fa-user-xmark mr-2"></i> Dar de baixa
+                    </Button>
+                    <Button variant="primary" className="ml-2" onClick={() => {
+                      setShowFichaModal(false);
+                      handleEditStudent(studentDetails);
+                    }}>
+                      <i className="fa-solid fa-pen-to-square mr-2"></i> Editar
+                    </Button>
+                  </div>
                 </div>
               </>
             )}
