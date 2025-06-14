@@ -8,7 +8,6 @@ import Modal from '../components/ui/Modal';
 import { Student, Instrument, TableColumn, Course, Professor, Enrollment, Grade } from '../types';
 import * as dataService from '../services/dataService';
 import { ICONS } from '../constants';
-import { createStudent, updateStudent, deleteStudent } from '../../services/dataService';
 
 // ErrorBoundary local para evitar pantallas en branco
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
@@ -70,20 +69,8 @@ const StudentsPage: React.FC = () => {
 
   // Alta de estudiante
   const handleSaveStudent = async (studentData: any) => {
-    // Filtrar e transformar a snake_case por robustez
-    const snakeCaseStudent = {
-      user_id: studentData.user_id || studentData.userId,
-      first_name: studentData.first_name || studentData.firstName,
-      last_name: studentData.last_name || studentData.lastName,
-      email: studentData.email,
-      date_of_birth: studentData.date_of_birth || studentData.dateOfBirth,
-      instrument_id: studentData.instrument_id || studentData.instrumentId,
-      enrollment_date: studentData.enrollment_date || studentData.enrollmentDate,
-      address: studentData.address,
-      phone_number: studentData.phone_number || studentData.phoneNumber,
-    };
     try {
-      await createStudent(snakeCaseStudent);
+      await dataService.addItem(studentData, 'student');
       setShowAddModal(false);
       // Refrescar lista
       const updated = await dataService.getStudents();
@@ -97,7 +84,7 @@ const StudentsPage: React.FC = () => {
   const handleDeleteStudent = async (id: string) => {
     if (!window.confirm('¿Seguro que deseas dar de baixa este alumno/a?')) return;
     try {
-      await deleteStudent(id);
+      await dataService.deleteItem(id, 'student');
       setSelectedStudent(null);
       // Refrescar lista
       const updated = await dataService.getStudents();
@@ -112,10 +99,10 @@ const StudentsPage: React.FC = () => {
     setEditStudent(student);
     setShowEditModal(true);
   };
-  const handleUpdateStudent = async (studentData: Partial<Student>) => {
+  const handleUpdateStudent = async (studentData: any) => {
     if (!editStudent) return;
     try {
-      await updateStudent(editStudent.id, studentData);
+      await dataService.updateItem({ ...studentData, id: editStudent.id }, 'student');
       setShowEditModal(false);
       setEditStudent(null);
       // Refrescar lista
