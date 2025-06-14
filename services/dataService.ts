@@ -36,8 +36,8 @@ export const getPayments = async () => {
 
 // --- CRUD para alumnado ---
 export const createStudent = async (student: any) => {
-  // Solo los campos esperados y en snake_case
-  const snakeCaseStudent = {
+  // Solo los campos requeridos y sin id
+  const snakeCaseStudent: any = {
     user_id: student.user_id || student.userId,
     first_name: student.first_name || student.firstName,
     last_name: student.last_name || student.lastName,
@@ -45,9 +45,15 @@ export const createStudent = async (student: any) => {
     date_of_birth: student.date_of_birth || student.dateOfBirth,
     instrument_id: student.instrument_id || student.instrumentId,
     enrollment_date: student.enrollment_date || student.enrollmentDate,
-    address: student.address,
-    phone_number: student.phone_number || student.phoneNumber,
   };
+  if (student.address) snakeCaseStudent.address = student.address;
+  if (student.phone_number || student.phoneNumber) snakeCaseStudent.phone_number = student.phone_number || student.phoneNumber;
+  // Eliminar campos vacíos
+  Object.keys(snakeCaseStudent).forEach(key => {
+    if (snakeCaseStudent[key] === undefined || snakeCaseStudent[key] === null || snakeCaseStudent[key] === '') {
+      delete snakeCaseStudent[key];
+    }
+  });
   const res = await fetch('http://localhost:8000/api/students/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

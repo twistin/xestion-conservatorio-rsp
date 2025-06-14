@@ -82,11 +82,27 @@ const CoursesPage: React.FC = () => {
   };
   
   const handleSaveCourse = async (courseData: Course) => {
+    // Transformar a snake_case y solo los campos requiridos
+    const snakeCaseCourse: any = {
+      name: courseData.name,
+      description: courseData.description,
+      level: courseData.level,
+      teacher: courseData.teacherId || null,
+      start_date: courseData.startDate || null,
+      end_date: courseData.endDate || null,
+      room: courseData.room || null,
+    };
+    // Eliminar campos vacíos/null
+    Object.keys(snakeCaseCourse).forEach(key => {
+      if (snakeCaseCourse[key] === undefined || snakeCaseCourse[key] === null || snakeCaseCourse[key] === '') {
+        delete snakeCaseCourse[key];
+      }
+    });
     try {
       if (selectedCourse) {
-        await dataService.updateItem(courseData, 'course');
+        await dataService.updateItem({ ...snakeCaseCourse, id: selectedCourse.id }, 'course');
       } else {
-        await dataService.addItem(courseData, 'course');
+        await dataService.addItem(snakeCaseCourse, 'course');
       }
       fetchCoursesAndProfessors();
       setIsModalOpen(false);
