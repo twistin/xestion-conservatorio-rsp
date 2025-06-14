@@ -254,19 +254,9 @@ const StudentsPage: React.FC = () => {
                   })}
               </ul>
             </div>
-            {/* Historial académico y seguimiento */}
+            {/* Seguimiento del progreso */}
             <div className="mb-4">
-              <b>Historial académico:</b>
-              <ul className="text-neutral-medium text-sm ml-4 mt-1">
-                {enrollments.filter(e => e.status !== 'Active').length === 0 ? <li>No hay historial académico</li> :
-                  enrollments.filter(e => e.status !== 'Active').map(e => {
-                    const course = courses.find(c => c.id === e.courseId);
-                    return <li key={e.id}>{course?.name || 'Curso desconocido'} ({e.status})</li>;
-                  })}
-              </ul>
-            </div>
-            <div className="mb-4">
-              <b>Progreso y calificaciones:</b>
+              <b>Seguimiento del progreso:</b>
               <ul className="text-neutral-medium text-sm ml-4 mt-1">
                 {enrollments.length === 0 ? <li>No hay calificaciones</li> :
                   enrollments.map(e => {
@@ -276,7 +266,7 @@ const StudentsPage: React.FC = () => {
                       <li key={e.id}>
                         <b>{courses.find(c => c.id === e.courseId)?.name || 'Curso'}:</b>
                         <ul className="ml-4">
-                          {enrollmentGrades.map(g => (
+                          {enrollmentGrades.slice(0,3).map(g => (
                             <li key={g.id}>{g.assignmentName}: {g.score}/100 ({new Date(g.dateGiven).toLocaleDateString()}) {g.comments && <span>- {g.comments}</span>}</li>
                           ))}
                         </ul>
