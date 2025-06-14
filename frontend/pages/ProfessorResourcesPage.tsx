@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import * as dataService from '../services/dataService';
+import { isIAEnabled } from '../services/dataService';
 
 const ProfessorResourcesPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -76,8 +77,16 @@ const ProfessorResourcesPage: React.FC = () => {
     }
   };
 
+  const iaActive = isIAEnabled();
+
   return (
     <>
+      {!iaActive && (
+        <div className="max-w-xl mx-auto mt-8 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-yellow-900 text-center">
+          <b>La IA administrativa está desactivada por el administrador.</b><br />
+          Las funciones automáticas de recursos, revisión de documentos y mensajes no están disponibles temporalmente.
+        </div>
+      )}
       <Card title="Revisión IA de Documentos" className="max-w-xl mx-auto mt-8">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

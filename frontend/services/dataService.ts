@@ -359,21 +359,41 @@ export const deleteItem = async (id: string, type: string): Promise<void> => {
 
 export const getDashboardMetrics = async (role: UserRole, userId: string) => {
   if (role === UserRole.Admin) {
-    const totalStudents = mockStudents.length;
-    const totalProfessors = mockProfessors.length;
-    const activeCourses = mockCourses.filter(c => !c.endDate || new Date(c.endDate) > new Date()).length;
-    const totalPayments = mockPayments.reduce((sum, p) => p.status === PaymentStatus.Paid ? sum + p.amount : sum, 0);
-    return simulateApiCall({
-      totalStudents,
-      totalProfessors,
+    // Obtener datos reales del backend
+    const [students, professors, courses, payments, enrollments] = await Promise.all([
+      getStudents(),
+      getProfessors(),
+      getCourses(),
+      getAllPayments(),
+      getAllEnrollments()
+    ]);
+    const now = new Date();
+    // Cursos activos: sin fecha de fin o fecha de fin en el futuro
+    const activeCourses = courses.filter((c: any) => !c.endDate || new Date(c.endDate) > now).length;
+    // Pagos del mes actual y pagados
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const totalPayments = payments.filter((p: any) => {
+      if (p.status !== PaymentStatus.Paid || !p.paymentDate) return false;
+      const d = new Date(p.paymentDate);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    }).reduce((sum: number, p: any) => sum + p.amount, 0);
+    // Matrículas recientes (últimas 5)
+    const recentEnrollments = enrollments
+      .sort((a: any, b: any) => new Date(b.enrollmentDate || b.enrollment_date).getTime() - new Date(a.enrollmentDate || a.enrollment_date).getTime())
+      .slice(0, 5)
+      .map((e: any) => {
+        const student = students.find((s: any) => s.id === e.studentId || s.id === e.student);
+        const course = courses.find((c: any) => c.id === e.courseId || c.id === e.course);
+        return `Alumno/a ${student?.firstName || ''} matriculouse en ${course?.name || ''}`;
+      });
+    return {
+      totalStudents: students.length,
+      totalProfessors: professors.length,
       activeCourses,
       totalPayments,
-      recentEnrollments: mockEnrollments.slice(0, 5).map(e => {
-        const student = mockStudents.find(s=>s.id === e.studentId);
-        const course = mockCourses.find(c=>c.id === e.courseId);
-        return `Student ${student?.firstName} enrolled in ${course?.name}`;
-      })
-    });
+      recentEnrollments
+    };
   }
   if (role === UserRole.Professor) {
     const professor = mockProfessors.find(p => p.userId === userId);
@@ -456,7 +476,13 @@ export interface IAEnrollmentAnalysis {
   saturated_schedules: { room: string; date: string; count: number }[];
 }
 
+export function isIAEnabled() {
+  const stored = localStorage.getItem('iaEnabled');
+  return stored ? stored === 'true' : true;
+}
+
 export const getIAEnrollmentAnalysis = async (): Promise<IAEnrollmentAnalysis> => {
+  if (!isIAEnabled()) throw new Error('La IA está desactivada por el administrador.');
   const res = await fetch(`${API_BASE}/ia/enrollment-analysis/`);
   if (!res.ok) throw new Error('Error al obtener análisis de matrículas IA');
   return await res.json();
@@ -467,6 +493,7 @@ export interface IAScheduleOptimization {
 }
 
 export const getIAScheduleOptimization = async (): Promise<IAScheduleOptimization> => {
+  if (!isIAEnabled()) throw new Error('La IA está desactivada por el administrador.');
   const res = await fetch(`${API_BASE}/ia/schedule-optimization/`);
   if (!res.ok) throw new Error('Error al obtener optimización de horarios IA');
   return await res.json();
@@ -477,6 +504,7 @@ export interface IADemandPrediction {
 }
 
 export const getIADemandPrediction = async (): Promise<IADemandPrediction> => {
+  if (!isIAEnabled()) throw new Error('La IA está desactivada por el administrador.');
   const res = await fetch(`${API_BASE}/ia/demand-prediction/`);
   if (!res.ok) throw new Error('Error al obtener predicción de demanda IA');
   return await res.json();
@@ -484,6 +512,7 @@ export const getIADemandPrediction = async (): Promise<IADemandPrediction> => {
 
 // Asistente IA para profesores
 export const askProfessorFAQ = async (question: string): Promise<{answer: string}> => {
+  if (!isIAEnabled()) throw new Error('La IA está desactivada por el administrador.');
   const res = await fetch(`${API_BASE}/ia/professor-faq/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -494,6 +523,7 @@ export const askProfessorFAQ = async (question: string): Promise<{answer: string
 };
 
 export const reviewDocumentIA = async (file: File): Promise<{result: string}> => {
+  if (!isIAEnabled()) throw new Error('La IA está desactivada por el administrador.');
   const formData = new FormData();
   formData.append('file', file);
   const res = await fetch(`${API_BASE}/ia/document-review/`, {
@@ -518,12 +548,14 @@ export interface IAReport {
 }
 
 export const getIAReport = async (): Promise<IAReport> => {
+  if (!isIAEnabled()) throw new Error('La IA está desactivada por el administrador.');
   const res = await fetch(`${API_BASE}/ia/generate-report/`);
   if (!res.ok) throw new Error('Error al generar el informe IA');
   return await res.json();
 };
 
 export const getResourceSuggestionsIA = async (params: {level?: string, instrument?: string, topic?: string}): Promise<{suggestions: string[]}> => {
+  if (!isIAEnabled()) throw new Error('La IA está desactivada por el administrador.');
   const res = await fetch(`${API_BASE}/ia/resources-suggestions/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -534,6 +566,7 @@ export const getResourceSuggestionsIA = async (params: {level?: string, instrume
 };
 
 export const generateFamilyMessageIA = async (motivo: string, alumno: string): Promise<{mensaje: string}> => {
+  if (!isIAEnabled()) throw new Error('La IA está desactivada por el administrador.');
   const res = await fetch(`${API_BASE}/ia/generate-family-message/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

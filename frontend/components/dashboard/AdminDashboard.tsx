@@ -33,6 +33,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const [isDemandPredictionLoading, setIsDemandPredictionLoading] = useState(true);
   const [iaReport, setIaReport] = useState<dataService.IAReport | null>(null);
   const [isIaReportLoading, setIsIaReportLoading] = useState(true);
+  const [iaEnabled, setIaEnabled] = useState(() => {
+    const stored = localStorage.getItem('iaEnabled');
+    return stored ? stored === 'true' : true;
+  });
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -88,6 +92,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
       .catch(() => setIaReport(null))
       .finally(() => setIsIaReportLoading(false));
   }, []);
+
+  const handleToggleIA = () => {
+    const newValue = !iaEnabled;
+    setIaEnabled(newValue);
+    localStorage.setItem('iaEnabled', String(newValue));
+    // Aquí podrías disparar lógica adicional para alternar endpoints reales/mock si lo deseas
+  };
 
   const breadcrumbs = [{ label: 'Panel de Control', current: true }];
 
@@ -217,6 +228,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
           ) : (
             <div className="text-sm text-status-red">No se pudo generar el informe IA.</div>
           )}
+        </Card>
+        <Card title="Activar IA Administrativa" className="lg:col-span-1">
+          <div className="mb-3 text-sm text-neutral-medium">
+            Puedes activar o desactivar las funciones IA administrativas en tiempo real para pruebas o producción.
+          </div>
+          <div className="flex items-center gap-3 mb-2">
+            <span className="font-medium">Estado IA:</span>
+            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${iaEnabled ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{iaEnabled ? 'Activa' : 'Desactivada'}</span>
+          </div>
+          <Button variant={iaEnabled ? 'danger' : 'primary'} className="w-full" onClick={handleToggleIA}>
+            {iaEnabled ? 'Desactivar IA' : 'Activar IA'}
+          </Button>
+          <div className="mt-3 text-xs text-neutral-medium">
+            (El estado se guarda localmente. Próximamente: integración con backend/config global.)
+          </div>
         </Card>
       </div>
 
