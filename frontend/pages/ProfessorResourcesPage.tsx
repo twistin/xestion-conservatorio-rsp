@@ -8,6 +8,12 @@ const ProfessorResourcesPage: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [level, setLevel] = useState('');
+  const [instrument, setInstrument] = useState('');
+  const [topic, setTopic] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [suggestionError, setSuggestionError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files?.[0] || null);
@@ -28,6 +34,21 @@ const ProfessorResourcesPage: React.FC = () => {
       setError('Error al revisar el documento.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSuggest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSuggesting(true);
+    setSuggestions([]);
+    setSuggestionError(null);
+    try {
+      const res = await dataService.getResourceSuggestionsIA({ level, instrument, topic });
+      setSuggestions(res.suggestions);
+    } catch {
+      setSuggestionError('Error al obtener sugerencias IA.');
+    } finally {
+      setIsSuggesting(false);
     }
   };
 
@@ -59,17 +80,24 @@ const ProfessorResourcesPage: React.FC = () => {
       </Card>
       {/* Espacio para recursos didácticos IA */}
       <Card title="Recursos Didácticos IA" className="max-w-xl mx-auto mt-8">
-        <div className="text-sm text-neutral-medium mb-2">
-          Próximamente: sugerencias automáticas de materiales, enlaces y recursos pedagógicos personalizados según tus cursos y alumnado.
-        </div>
-        <ul className="list-disc pl-5 text-sm">
-          <li>Material recomendado para piano elemental</li>
-          <li>Guía de iniciación a la teoría musical</li>
-          <li>Enlace a partituras libres de derechos</li>
-          <li>Consejos para la motivación del alumnado</li>
-        </ul>
+        <form onSubmit={handleSuggest} className="space-y-3 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <input type="text" className="border rounded px-2 py-1" placeholder="Nivel (opcional)" value={level} onChange={e => setLevel(e.target.value)} />
+            <input type="text" className="border rounded px-2 py-1" placeholder="Instrumento (opcional)" value={instrument} onChange={e => setInstrument(e.target.value)} />
+            <input type="text" className="border rounded px-2 py-1" placeholder="Tema o palabra clave" value={topic} onChange={e => setTopic(e.target.value)} required />
+          </div>
+          <Button type="submit" variant="primary" disabled={isSuggesting || !topic}>
+            {isSuggesting ? 'Buscando...' : 'Obtener Sugerencias IA'}
+          </Button>
+        </form>
+        {suggestionError && <div className="p-2 bg-red-50 border border-red-200 rounded text-red-900 mb-2">{suggestionError}</div>}
+        {suggestions.length > 0 && (
+          <ul className="list-disc pl-5 text-sm">
+            {suggestions.map((s, i) => <li key={i}>{s}</li>)}
+          </ul>
+        )}
         <div className="mt-4 text-xs text-neutral-medium">
-          ¿Te gustaría sugerencias personalizadas? Pronto podrás solicitarlas aquí mediante IA.
+          Introduce un tema, instrumento o nivel para recibir sugerencias automáticas de materiales y recursos.
         </div>
       </Card>
     </>

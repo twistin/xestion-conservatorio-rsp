@@ -522,3 +522,13 @@ export const getIAReport = async (): Promise<IAReport> => {
   if (!res.ok) throw new Error('Error al generar el informe IA');
   return await res.json();
 };
+
+export const getResourceSuggestionsIA = async (params: {level?: string, instrument?: string, topic?: string}): Promise<{suggestions: string[]}> => {
+  const res = await fetch(`${API_BASE}/ia/resources-suggestions/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params)
+  });
+  if (!res.ok) throw new Error('Error al obtener sugerencias IA');
+  return await res.json();
+};

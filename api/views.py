@@ -398,3 +398,23 @@ def ia_generate_report(request):
         'notes': 'Actividad estable. Sin incidencias graves. Buen nivel de asistencia.'
     }
     return Response({'report': report})
+
+# --- IA Sugerencias de recursos didácticos personalizados (simulado) ---
+@api_view(['POST'])
+def ia_resources_suggestions(request):
+    # Recibe: nivel, instrumento, tema, etc.
+    level = request.data.get('level', '').lower()
+    instrument = request.data.get('instrument', '').lower()
+    topic = request.data.get('topic', '').lower()
+    # Sugerencias simuladas
+    suggestions = []
+    if 'piano' in instrument:
+        suggestions.append('Método Bastien para Piano - Nivel 1 (PDF)')
+        suggestions.append('Video: Postura correcta en el piano')
+    if 'teoría' in topic or 'teoria' in topic:
+        suggestions.append('Guía de iniciación a la teoría musical (PDF)')
+    if 'motivación' in topic or 'motivacion' in topic:
+        suggestions.append('Artículo: Estrategias para motivar al alumnado')
+    if not suggestions:
+        suggestions.append('No se encontraron sugerencias específicas. Prueba con otro tema o instrumento.')
+    return Response({'suggestions': suggestions})

@@ -22,4 +22,5 @@ urlpatterns = [
     path('ia/professor-faq/', views.ia_professor_faq, name='ia_professor_faq'),
     path('ia/document-review/', views.ia_document_review, name='ia_document_review'),
     path('ia/generate-report/', views.ia_generate_report, name='ia_generate_report'),
+    path('ia/resources-suggestions/', views.ia_resources_suggestions, name='ia_resources_suggestions'),
 ]
