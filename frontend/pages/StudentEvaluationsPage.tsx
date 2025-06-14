@@ -4,7 +4,7 @@ import ComingSoon from '../components/shared/ComingSoon';
 
 const StudentEvaluationsPage: React.FC = () => (
   <PageContainer title="Evaluaciones e Progreso">
-    <ComingSoon message="Aquí verás tus notas, informes cualitativos y feedback de profesores." />
+    <ComingSoon featureName="Evaluaciones e Progreso" />
   </PageContainer>
 );
 

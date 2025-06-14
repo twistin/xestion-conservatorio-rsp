@@ -10,6 +10,29 @@ import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
 import ProfessorForm from '../components/professors/ProfessorForm';
 
+// ErrorBoundary local para evitar pantallas en blanco
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch() {}
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="max-w-xl mx-auto mt-12 p-6 bg-red-50 border border-red-200 rounded text-red-900 text-center">
+          <b>Ocurrió un erro inesperado nesta páxina.</b><br />
+          Por favor, recarga ou contacta co administrador se persiste.
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const ProfessorsPage: React.FC = () => {
   const [professors, setProfessors] = useState<Professor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -100,47 +123,49 @@ const ProfessorsPage: React.FC = () => {
   }
 
   return (
-    <PageContainer
-      title="Xestionar Profesorado"
-      breadcrumbs={breadcrumbs}
-      headerActions={
-        <Button onClick={handleAddProfessor} iconLeft={ICONS.add}>
-          Engadir Profesor/a
-        </Button>
-      }
-    >
-      { !isLoading && professors.length === 0 ? (
-        <EmptyState
-          icon={ICONS.professors}
-          title="Non se atopou profesorado"
-          description="Comece engadindo o seu primeiro profesor/a."
-          action={<Button onClick={handleAddProfessor} iconLeft={ICONS.add}>Engadir Profesor/a</Button>}
-        />
-      ) : (
-        <Table<Professor>
-          columns={columns}
-          data={professors}
-          isLoading={isLoading}
-          onRowClick={handleEditProfessor}
-          searchableKeys={['firstName', 'lastName', 'email']}
-        />
-      )}
-
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title={selectedProfessor ? 'Editar Profesor/a' : 'Engadir Novo/a Profesor/a'}
-          size="lg"
-        >
-          <ProfessorForm
-            professor={selectedProfessor}
-            onSave={handleSaveProfessor}
-            onCancel={() => setIsModalOpen(false)}
+    <ErrorBoundary>
+      <PageContainer
+        title="Xestionar Profesorado"
+        breadcrumbs={breadcrumbs}
+        headerActions={
+          <Button onClick={handleAddProfessor} iconLeft={ICONS.add}>
+            Engadir Profesor/a
+          </Button>
+        }
+      >
+        { !isLoading && professors.length === 0 ? (
+          <EmptyState
+            icon={ICONS.professors}
+            title="Non se atopou profesorado"
+            description="Comece engadindo o seu primeiro profesor/a."
+            action={<Button onClick={handleAddProfessor} iconLeft={ICONS.add}>Engadir Profesor/a</Button>}
           />
-        </Modal>
-      )}
-    </PageContainer>
+        ) : (
+          <Table<Professor>
+            columns={columns}
+            data={professors}
+            isLoading={isLoading}
+            onRowClick={handleEditProfessor}
+            searchableKeys={['firstName', 'lastName', 'email']}
+          />
+        )}
+
+        {isModalOpen && (
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            title={selectedProfessor ? 'Editar Profesor/a' : 'Engadir Novo/a Profesor/a'}
+            size="lg"
+          >
+            <ProfessorForm
+              professor={selectedProfessor}
+              onSave={handleSaveProfessor}
+              onCancel={() => setIsModalOpen(false)}
+            />
+          </Modal>
+        )}
+      </PageContainer>
+    </ErrorBoundary>
   );
 };
 

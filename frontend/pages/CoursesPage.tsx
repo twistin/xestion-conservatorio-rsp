@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import Table from '../components/ui/Table';
@@ -10,6 +9,29 @@ import { ICONS } from '../constants';
 import CourseForm from '../components/courses/CourseForm';
 import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
+
+// ErrorBoundary local para evitar pantallas en blanco
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch() {}
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="max-w-xl mx-auto mt-12 p-6 bg-red-50 border border-red-200 rounded text-red-900 text-center">
+          <b>Ocurrió un erro inesperado nesta páxina.</b><br />
+          Por favor, recarga ou contacta co administrador se persiste.
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const CoursesPage: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -112,48 +134,50 @@ const CoursesPage: React.FC = () => {
   }
 
   return (
-    <PageContainer
-      title="Xestionar Cursos"
-      breadcrumbs={breadcrumbs}
-      headerActions={
-        <Button onClick={handleAddCourse} iconLeft={ICONS.add}>
-          Engadir Curso
-        </Button>
-      }
-    >
-      { !isLoading && courses.length === 0 ? (
-          <EmptyState 
-            icon={ICONS.courses}
-            title="Non se atoparon cursos"
-            description="Comece engadindo o seu primeiro curso."
-            action={<Button onClick={handleAddCourse} iconLeft={ICONS.add}>Engadir Curso</Button>}
+    <ErrorBoundary>
+      <PageContainer
+        title="Xestionar Cursos"
+        breadcrumbs={breadcrumbs}
+        headerActions={
+          <Button onClick={handleAddCourse} iconLeft={ICONS.add}>
+            Engadir Curso
+          </Button>
+        }
+      >
+        { !isLoading && courses.length === 0 ? (
+            <EmptyState 
+              icon={ICONS.courses}
+              title="Non se atoparon cursos"
+              description="Comece engadindo o seu primeiro curso."
+              action={<Button onClick={handleAddCourse} iconLeft={ICONS.add}>Engadir Curso</Button>}
+            />
+          ) : (
+          <Table<Course>
+              columns={columns}
+              data={courses}
+              isLoading={isLoading}
+              onRowClick={handleEditCourse}
+              searchableKeys={['name', 'level']}
           />
-        ) : (
-        <Table<Course>
-            columns={columns}
-            data={courses}
-            isLoading={isLoading}
-            onRowClick={handleEditCourse}
-            searchableKeys={['name', 'level']}
-        />
-      )}
+        )}
 
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title={selectedCourse ? 'Editar Curso' : 'Engadir Novo Curso'}
-          size="lg"
-        >
-          <CourseForm 
-            course={selectedCourse} 
-            professors={professors}
-            onSave={handleSaveCourse} 
-            onCancel={() => setIsModalOpen(false)} 
-          />
-        </Modal>
-      )}
-    </PageContainer>
+        {isModalOpen && (
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            title={selectedCourse ? 'Editar Curso' : 'Engadir Novo Curso'}
+            size="lg"
+          >
+            <CourseForm 
+              course={selectedCourse} 
+              professors={professors}
+              onSave={handleSaveCourse} 
+              onCancel={() => setIsModalOpen(false)} 
+            />
+          </Modal>
+        )}
+      </PageContainer>
+    </ErrorBoundary>
   );
 };
 

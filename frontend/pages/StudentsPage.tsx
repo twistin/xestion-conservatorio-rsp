@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import Table from '../components/ui/Table';
@@ -10,6 +9,29 @@ import { ICONS } from '../constants';
 import StudentForm from '../components/students/StudentForm'; 
 import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
+
+// ErrorBoundary local para evitar pantallas en branco
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch() {}
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="max-w-xl mx-auto mt-12 p-6 bg-red-50 border border-red-200 rounded text-red-900 text-center">
+          <b>Ocurrió un erro inesperado nesta páxina.</b><br />
+          Por favor, recarga ou contacta co administrador se persiste.
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const StudentsPage: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -110,48 +132,50 @@ const StudentsPage: React.FC = () => {
   }
 
   return (
-    <PageContainer
-      title="Xestionar Alumnado"
-      breadcrumbs={breadcrumbs}
-      headerActions={
-        <Button onClick={handleAddStudent} iconLeft={ICONS.add}>
-          Engadir Alumno/a
-        </Button>
-      }
-    >
-      { !isLoading && students.length === 0 ? (
-        <EmptyState 
-          icon={ICONS.students}
-          title="Non se atopou alumnado"
-          description="Comece engadindo o seu primeiro alumno/a."
-          action={<Button onClick={handleAddStudent} iconLeft={ICONS.add}>Engadir Alumno/a</Button>}
-        />
-      ) : (
-        <Table<Student>
-            columns={columns}
-            data={students}
-            isLoading={isLoading} 
-            onRowClick={handleEditStudent} 
-            searchableKeys={['firstName', 'lastName', 'email']}
-        />
-      )}
-
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title={selectedStudent ? 'Editar Alumno/a' : 'Engadir Novo/a Alumno/a'}
-          size="lg"
-        >
-          <StudentForm 
-            student={selectedStudent} 
-            instruments={instruments}
-            onSave={handleSaveStudent} 
-            onCancel={() => setIsModalOpen(false)} 
+    <ErrorBoundary>
+      <PageContainer
+        title="Xestionar Alumnado"
+        breadcrumbs={breadcrumbs}
+        headerActions={
+          <Button onClick={handleAddStudent} iconLeft={ICONS.add}>
+            Engadir Alumno/a
+          </Button>
+        }
+      >
+        { !isLoading && students.length === 0 ? (
+          <EmptyState 
+            icon={ICONS.students}
+            title="Non se atopou alumnado"
+            description="Comece engadindo o seu primeiro alumno/a."
+            action={<Button onClick={handleAddStudent} iconLeft={ICONS.add}>Engadir Alumno/a</Button>}
           />
-        </Modal>
-      )}
-    </PageContainer>
+        ) : (
+          <Table<Student>
+              columns={columns}
+              data={students}
+              isLoading={isLoading} 
+              onRowClick={handleEditStudent} 
+              searchableKeys={['firstName', 'lastName', 'email']}
+          />
+        )}
+
+        {isModalOpen && (
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            title={selectedStudent ? 'Editar Alumno/a' : 'Engadir Novo/a Alumno/a'}
+            size="lg"
+          >
+            <StudentForm 
+              student={selectedStudent} 
+              instruments={instruments}
+              onSave={handleSaveStudent} 
+              onCancel={() => setIsModalOpen(false)} 
+            />
+          </Modal>
+        )}
+      </PageContainer>
+    </ErrorBoundary>
   );
 };
 

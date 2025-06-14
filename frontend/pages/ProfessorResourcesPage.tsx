@@ -4,6 +4,31 @@ import Button from '../components/ui/Button';
 import * as dataService from '../services/dataService';
 import { isIAEnabled } from '../services/dataService';
 
+// ErrorBoundary local para evitar pantallas en blanco
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch() {
+    // Se puede loguear el error si se desea
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="max-w-xl mx-auto mt-12 p-6 bg-red-50 border border-red-200 rounded text-red-900 text-center">
+          <b>Ocurrió un erro inesperado nesta páxina.</b><br />
+          Por favor, recarga ou contacta co administrador se persiste.
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const ProfessorResourcesPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<string | null>(null);
@@ -80,7 +105,7 @@ const ProfessorResourcesPage: React.FC = () => {
   const iaActive = isIAEnabled();
 
   return (
-    <>
+    <ErrorBoundary>
       {!iaActive && (
         <div className="max-w-xl mx-auto mt-8 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-yellow-900 text-center">
           <b>La IA administrativa está desactivada por el administrador.</b><br />
@@ -154,7 +179,7 @@ const ProfessorResourcesPage: React.FC = () => {
           Escribe el nombre del alumno/a y el motivo para obtener un mensaje automático listo para enviar a las familias.
         </div>
       </Card>
-    </>
+    </ErrorBoundary>
   );
 };
 

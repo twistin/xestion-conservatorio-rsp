@@ -10,6 +10,29 @@ import { ICONS } from '../constants';
 import Button from '../components/ui/Button'; // Added import
 import Modal from '../components/ui/Modal';
 
+// ErrorBoundary local para evitar pantallas en branco
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch() {}
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="max-w-xl mx-auto mt-12 p-6 bg-red-50 border border-red-200 rounded text-red-900 text-center">
+          <b>Ocurrió un erro inesperado nesta páxina.</b><br />
+          Por favor, recarga ou contacta co administrador se persiste.
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const emptyPayment = (students: Student[]): Partial<Payment> => ({
   studentId: students[0]?.id || '',
   amount: 0,
@@ -162,62 +185,63 @@ const PaymentsPage: React.FC = () => {
   if (isLoading) {
     return <Spinner fullPage message="Cargando pagamentos..." />;
   }
-
   return (
-    <PageContainer title={pageTitle} breadcrumbs={breadcrumbs}
-      headerActions={user?.role === UserRole.Admin ? (
-        <Button onClick={handleAddPayment} iconLeft={ICONS.add}>Engadir Pago</Button>
-      ) : undefined}
-    >
-      {payments.length === 0 ? (
-        <EmptyState
-          icon={ICONS.payments}
-          title="Non se atoparon pagamentos"
-          description={user?.role === UserRole.Admin ? "Non hai rexistros de pagamento dispoñibles no sistema." : "Non ten rexistros de pagamento neste momento."}
-        />
-      ) : (
-        <Table<Payment>
-          columns={columns}
-          data={payments}
-          isLoading={isLoading}
-          searchableKeys={user?.role === UserRole.Admin ? ['description', 'studentId'] : ['description']}
-        />
-      )}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Engadir Novo Pago">
-        <form onSubmit={e => { e.preventDefault(); handleSavePayment(); }} className="space-y-4">
-          <div>
-            <label>Alumno/a</label>
-            <select className="input" value={newPayment.studentId} onChange={e => setNewPayment(p => ({ ...p, studentId: e.target.value }))} required>
-              {students.map(s => <option key={s.id} value={s.id}>{s.firstName} {s.lastName}</option>)}
-            </select>
-          </div>
-          <div>
-            <label>Importe (€)</label>
-            <input className="input" type="number" min="0" step="0.01" value={newPayment.amount || ''} onChange={e => setNewPayment(p => ({ ...p, amount: parseFloat(e.target.value) }))} required />
-          </div>
-          <div>
-            <label>Descrición</label>
-            <input className="input" value={newPayment.description || ''} onChange={e => setNewPayment(p => ({ ...p, description: e.target.value }))} required />
-          </div>
-          <div>
-            <label>Data de Vencemento</label>
-            <input className="input" type="date" value={newPayment.dueDate || ''} onChange={e => setNewPayment(p => ({ ...p, dueDate: e.target.value }))} required />
-          </div>
-          <div>
-            <label>Estado</label>
-            <select className="input" value={newPayment.status} onChange={e => setNewPayment(p => ({ ...p, status: e.target.value as PaymentStatus }))} required>
-              <option value={PaymentStatus.Pending}>Pendente</option>
-              <option value={PaymentStatus.Paid}>Pagado</option>
-              <option value={PaymentStatus.Overdue}>Vencido</option>
-            </select>
-          </div>
-          <div className="flex justify-end space-x-2 pt-2">
-            <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-            <Button type="submit">Gardar</Button>
-          </div>
-        </form>
-      </Modal>
-    </PageContainer>
+    <ErrorBoundary>
+      <PageContainer title={pageTitle} breadcrumbs={breadcrumbs}
+        headerActions={user?.role === UserRole.Admin ? (
+          <Button onClick={handleAddPayment} iconLeft={ICONS.add}>Engadir Pago</Button>
+        ) : undefined}
+      >
+        {payments.length === 0 ? (
+          <EmptyState
+            icon={ICONS.payments}
+            title="Non se atoparon pagamentos"
+            description={user?.role === UserRole.Admin ? "Non hai rexistros de pagamento dispoñibles no sistema." : "Non ten rexistros de pagamento neste momento."}
+          />
+        ) : (
+          <Table<Payment>
+            columns={columns}
+            data={payments}
+            isLoading={isLoading}
+            searchableKeys={user?.role === UserRole.Admin ? ['description', 'studentId'] : ['description']}
+          />
+        )}
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Engadir Novo Pago">
+          <form onSubmit={e => { e.preventDefault(); handleSavePayment(); }} className="space-y-4">
+            <div>
+              <label>Alumno/a</label>
+              <select className="input" value={newPayment.studentId} onChange={e => setNewPayment(p => ({ ...p, studentId: e.target.value }))} required>
+                {students.map(s => <option key={s.id} value={s.id}>{s.firstName} {s.lastName}</option>)}
+              </select>
+            </div>
+            <div>
+              <label>Importe (€)</label>
+              <input className="input" type="number" min="0" step="0.01" value={newPayment.amount || ''} onChange={e => setNewPayment(p => ({ ...p, amount: parseFloat(e.target.value) }))} required />
+            </div>
+            <div>
+              <label>Descrición</label>
+              <input className="input" value={newPayment.description || ''} onChange={e => setNewPayment(p => ({ ...p, description: e.target.value }))} required />
+            </div>
+            <div>
+              <label>Data de Vencemento</label>
+              <input className="input" type="date" value={newPayment.dueDate || ''} onChange={e => setNewPayment(p => ({ ...p, dueDate: e.target.value }))} required />
+            </div>
+            <div>
+              <label>Estado</label>
+              <select className="input" value={newPayment.status} onChange={e => setNewPayment(p => ({ ...p, status: e.target.value as PaymentStatus }))} required>
+                <option value={PaymentStatus.Pending}>Pendente</option>
+                <option value={PaymentStatus.Paid}>Pagado</option>
+                <option value={PaymentStatus.Overdue}>Vencido</option>
+              </select>
+            </div>
+            <div className="flex justify-end space-x-2 pt-2">
+              <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
+              <Button type="submit">Gardar</Button>
+            </div>
+          </form>
+        </Modal>
+      </PageContainer>
+    </ErrorBoundary>
   );
 };
 
