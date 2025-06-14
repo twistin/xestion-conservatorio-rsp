@@ -9,6 +9,7 @@ import EmptyState from '../components/ui/EmptyState';
 import { ICONS } from '../constants';
 import Button from '../components/ui/Button'; // Added import
 import Modal from '../components/ui/Modal';
+import PaymentFichaModal from '../components/payments/PaymentFichaModal';
 
 // ErrorBoundary local para evitar pantallas en branco
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
@@ -47,7 +48,9 @@ const PaymentsPage: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]); 
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showFichaModal, setShowFichaModal] = useState(false);
   const [newPayment, setNewPayment] = useState<Partial<Payment>>(emptyPayment([]));
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
 
   const fetchPayments = useCallback(async () => {
     if (!user) return;
@@ -136,11 +139,14 @@ const PaymentsPage: React.FC = () => {
         return student ? `${student.firstName} ${student.lastName}` : 'Descoñecido';
      }},
     ...studentColumns.filter(col => col.key !== 'invoiceUrl'), 
-    { key: 'actions', header: 'Accións', render: (p) => (
-      <div className="flex gap-2">
-        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(p, PaymentStatus.Paid)} title="Marcar como Pagado"><i className="fa-solid fa-check text-green-600"></i></Button>
-        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(p, PaymentStatus.Pending)} title="Marcar como Pendente"><i className="fa-solid fa-hourglass-half text-yellow-600"></i></Button>
-        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(p, PaymentStatus.Overdue)} title="Marcar como Vencido"><i className="fa-solid fa-exclamation-triangle text-red-600"></i></Button>
+    { key: 'actions', header: 'Accións', render: (payment) => (
+      <div className="flex space-x-2">
+        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(payment, PaymentStatus.Paid)} title="Marcar como Pagado"><i className="fa-solid fa-check text-green-600"></i></Button>
+        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(payment, PaymentStatus.Pending)} title="Marcar como Pendente"><i className="fa-solid fa-hourglass-half text-yellow-600"></i></Button>
+        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(payment, PaymentStatus.Overdue)} title="Marcar como Vencido"><i className="fa-solid fa-exclamation-triangle text-red-600"></i></Button>
+        <Button variant="ghost" size="sm" onClick={() => { setSelectedPayment(payment); setShowFichaModal(true); }} title="Ver ficha">
+          <i className="fa-solid fa-address-card"></i>
+        </Button>
       </div>
     ) }
   ];
@@ -240,6 +246,12 @@ const PaymentsPage: React.FC = () => {
             </div>
           </form>
         </Modal>
+        <PaymentFichaModal
+          isOpen={showFichaModal && !!selectedPayment}
+          onClose={() => { setShowFichaModal(false); setSelectedPayment(null); }}
+          student={selectedPayment ? students.find(s => s.id === selectedPayment.studentId)! : students[0]}
+          payments={selectedPayment ? payments.filter(p => p.studentId === selectedPayment.studentId) : []}
+        />
       </PageContainer>
     </ErrorBoundary>
   );
