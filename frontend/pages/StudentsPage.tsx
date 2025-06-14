@@ -330,6 +330,70 @@ const StudentsPage: React.FC = () => {
                         })}
                     </ul>
                   </div>
+                  {/* FILTROS E ESTADO */}
+                  <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Filtros visuales */}
+                    <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col gap-2">
+                      <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-filter"></i> Filtros rápidos</div>
+                      <div className="flex flex-wrap gap-2">
+                        {/* Nivel (placeholder: se asume que el nivel está en el curso) */}
+                        {courses.length > 0 && (
+                          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
+                            Nivel: {courses.find(c => enrollments.some(e => e.courseId === c.id))?.level || 'N/D'}
+                          </span>
+                        )}
+                        {/* Curso */}
+                        {courses.length > 0 && (
+                          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                            Curso: {courses.find(c => enrollments.some(e => e.courseId === c.id))?.name || 'N/D'}
+                          </span>
+                        )}
+                        {/* Instrumento */}
+                        <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">
+                          Instrumento: {instrument?.name || 'N/D'}
+                        </span>
+                        {/* Edad */}
+                        <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">
+                          Idade: {studentDetails.dateOfBirth ? Math.floor((new Date().getTime() - new Date(studentDetails.dateOfBirth).getTime()) / (365.25*24*60*60*1000)) + ' anos' : 'N/D'}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Estado de pagos/documentación (placeholder visual) */}
+                    <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col gap-2">
+                      <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-file-invoice-dollar"></i> Estado de pagos / documentación</div>
+                      <div className="flex flex-col gap-1 text-sm">
+                        {/* Aquí se pueden mostrar estados reales si hay datos, por ahora es visual */}
+                        <span className="flex items-center gap-2"><i className="fa-solid fa-circle-check text-green-500"></i> Pagos ao día</span>
+                        <span className="flex items-center gap-2"><i className="fa-solid fa-file-circle-check text-green-500"></i> Documentación completa</span>
+                        {/* Si hay lógica real, cambiar estos estados según los datos */}
+                      </div>
+                    </div>
+                  </div>
+                  {/* BLOQUE IA: Predición, Suxestións, Alertas */}
+                  <div className="mb-6">
+                    <div className="bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg shadow-sm p-4">
+                      <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                        <i className="fa-solid fa-robot"></i> IA educativa
+                      </div>
+                      <ul className="text-neutral-medium text-sm ml-2 mt-1 space-y-2">
+                        {/* Predición de abandono */}
+                        <li className="flex items-center gap-2">
+                          <i className="fa-solid fa-person-walking-arrow-right text-red-400"></i>
+                          <span><b>Predición de abandono:</b> <span className="text-red-600 font-semibold">Baixo risco</span> {/* Cambiar dinámicamente */}</span>
+                        </li>
+                        {/* Suxestións de itinerarios */}
+                        <li className="flex items-center gap-2">
+                          <i className="fa-solid fa-route text-green-500"></i>
+                          <span><b>Suxestións de itinerario:</b> Proponse continuar con "Grao Profesional" en Piano</span>
+                        </li>
+                        {/* Alertas de inasistencia ou baixo rendemento */}
+                        <li className="flex items-center gap-2">
+                          <i className="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                          <span><b>Alertas:</b> Sen incidencias recentes</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                   {/* Botóns de acción */}
                   <div className="flex justify-end gap-2 mt-4 border-t pt-4">
                     <Button variant="danger" onClick={() => handleDeleteStudent(studentDetails.id)}>
