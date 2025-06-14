@@ -4,34 +4,32 @@
 from api.models import Student, Instrument
 
 # Mapea nombres de instrumento a su ID real en la base de datos
-instrument_map = {i.name: str(i.id) for i in Instrument.objects.all()}
+instrument_map = {i.name.lower(): str(i.id) for i in Instrument.objects.all()}
 print('Instrumentos encontrados:')
 for name, id_ in instrument_map.items():
     print(f'  {name}: {id_}')
 
-# Opcional: mapea los alumnos que tienen instrument_id tipo instr-X a los IDs reales
+# Relación entre instrument_id tipo instr-X y nombre real (ajusta según tus datos)
+instr_id_to_name = {
+    'instr-1': 'piano',
+    'instr-2': 'guitarra',
+    'instr-3': 'violín',
+    'instr-4': 'flauta',
+    'instr-5': 'clarinete',
+    'instr-6': 'saxofón',
+    'instr-7': 'trompeta',
+    'instr-8': 'percusión',
+}
+
 changed = 0
 for student in Student.objects.all():
-    # Busca el instrumento por nombre si el instrument_id no es numérico
-    if not student.instrument_id.isdigit():
-        # Intenta deducir el nombre del instrumento a partir del instrument_id
-        # Por ejemplo, si instrument_id es 'instr-2', busca el instrumento con id=2
-        if student.instrument_id.startswith('instr-'):
-            try:
-                idx = int(student.instrument_id.split('-')[1])
-                # Busca el instrumento con ese índice (asumiendo orden de creación)
-                # Mejor: busca por nombre si tienes esa info
-                # Aquí puedes personalizar según tus datos
-                # Por ahora, solo lo muestra
-                print(f'Alumno {student.first_name} {student.last_name} tiene instrument_id={student.instrument_id} (no numérico)')
-            except Exception as e:
-                print(f'No se pudo parsear instrument_id para alumno {student.id}: {student.instrument_id}')
-        # Si tienes el nombre del instrumento en otro campo, puedes mapearlo aquí
-        # Si quieres forzar un valor, hazlo así:
-        # student.instrument_id = instrument_map["Guitarra"]
-        # student.save()
-    else:
-        # Ya es numérico, no hace falta cambiar
-        pass
-
-print('Script finalizado. Revisa la salida para ver qué alumnos necesitan ser corregidos.')
+    instr_id = student.instrument_id
+    if instr_id in instr_id_to_name:
+        name = instr_id_to_name[instr_id]
+        real_id = instrument_map.get(name)
+        if real_id and student.instrument_id != real_id:
+            print(f'Corrigiendo alumno {student.first_name} {student.last_name}: {student.instrument_id} -> {real_id}')
+            student.instrument_id = real_id
+            student.save()
+            changed += 1
+print(f'Corrección finalizada. Alumnos actualizados: {changed}')
