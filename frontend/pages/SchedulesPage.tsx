@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import { ScheduleItem, UserRole, Course, Professor, Student } from '../types';
 import * as dataService from '../services/dataService';
@@ -7,6 +7,7 @@ import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
 import { ICONS } from '../constants';
 import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
 
 const daysOfWeek: ScheduleItem['dayOfWeek'][] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const daysOfWeekGalician: Record<ScheduleItem['dayOfWeek'], string> = {
@@ -50,6 +51,8 @@ const SchedulesPage: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [professors, setProfessors] = useState<Professor[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
+
+  const [view, setView] = useState<'semanal'|'aulas'|'conflictos'|'personalizado'>('semanal');
 
 
   const fetchScheduleData = useCallback(async () => {
@@ -114,6 +117,47 @@ const SchedulesPage: React.FC = () => {
   return (
     <ErrorBoundary>
       <PageContainer title={pageTitle} breadcrumbs={breadcrumbs}>
+        <div className="mb-6 flex flex-wrap gap-2">
+          <Button variant={view==='semanal'?'primary':'outline'} onClick={()=>setView('semanal')}>Visualización semanal</Button>
+          <Button variant={view==='aulas'?'primary':'outline'} onClick={()=>setView('aulas')}>Aulas e dispoñibilidade</Button>
+          <Button variant={view==='conflictos'?'primary':'outline'} onClick={()=>setView('conflictos')}>Conflictos</Button>
+          <Button variant={view==='personalizado'?'primary':'outline'} onClick={()=>setView('personalizado')}>Horarios personalizados</Button>
+        </div>
+        {/* Visualización semanal */}
+        {view==='semanal' && (
+          <Card title="Horario Semanal">
+            <div className="text-neutral-medium text-sm mb-2">Visualización semanal de todas as actividades, clases e eventos.</div>
+            <div className="h-64 bg-blue-50 rounded flex items-center justify-center text-blue-400">(Aquí irá o calendario semanal con sistema de cores por tipo de actividade)</div>
+          </Card>
+        )}
+        {/* Gestión de aulas y disponibilidad */}
+        {view==='aulas' && (
+          <Card title="Xestión de Aulas e Dispoñibilidade">
+            <div className="text-neutral-medium text-sm mb-2">Consulta e xestión da dispoñibilidade das aulas.</div>
+            <div className="h-48 bg-purple-50 rounded flex items-center justify-center text-purple-400">(Aquí irá a táboa de aulas e franxas libres/ocupadas)</div>
+          </Card>
+        )}
+        {/* Conflictos de horarios */}
+        {view==='conflictos' && (
+          <Card title="Conflictos de Horario">
+            <div className="text-neutral-medium text-sm mb-2">Detección automática de solapamentos e alertas de exceso de carga.</div>
+            <div className="h-32 bg-red-50 rounded flex items-center justify-center text-red-400">(Aquí se mostrarán os conflitos detectados e alertas)</div>
+          </Card>
+        )}
+        {/* Horarios personalizados */}
+        {view==='personalizado' && (
+          <Card title="Horarios Personalizados">
+            <div className="text-neutral-medium text-sm mb-2">Consulta rápida do horario dun alumno/a ou profesor/a.</div>
+            <div className="h-32 bg-green-50 rounded flex items-center justify-center text-green-400">(Aquí irá o buscador e visualización individualizada)</div>
+          </Card>
+        )}
+        {/* Bloque IA: Generador y alertas */}
+        <div className="mb-8 mt-8">
+          <Card title="IA para Horarios Óptimos">
+            <div className="flex items-center gap-2 mb-2"><i className="fa-solid fa-robot text-xl text-primary"></i><span className="text-neutral-medium text-sm">Xerador automático de horarios óptimos e alertas de solapamento/exceso de carga.</span></div>
+            <Button variant="primary" disabled>Xerar horario óptimo (próximamente)</Button>
+          </Card>
+        </div>
         {scheduleItems.length === 0 ? (
           <EmptyState
             icon={ICONS.calendar}

@@ -61,3 +61,23 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.student.first_name} {self.student.last_name} - {self.course.name} ({self.status})"
+
+class Notification(models.Model):
+    TIPO_CHOICES = [
+        ('xeral', 'Xeral'),
+        ('aviso', 'Aviso'),
+        ('automatico', 'Automático'),
+    ]
+    titulo = models.CharField(max_length=200)
+    mensaxe = models.TextField()
+    data_envio = models.DateTimeField(auto_now_add=True)
+    usuario_destino = models.CharField(max_length=100, blank=True, null=True)  # Puede ser user_id, email, etc.
+    canal_preferido = models.CharField(max_length=50, blank=True, null=True)  # email, sms, app, etc.
+    lido = models.BooleanField(default=False)
+    data_lectura = models.DateTimeField(blank=True, null=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='xeral')
+    segmento = models.CharField(max_length=100, blank=True, null=True)  # Para segmentación IA
+    datos_extra = models.JSONField(blank=True, null=True)  # Para adjuntos, personalización, etc.
+
+    def __str__(self):
+        return f"{self.titulo} - {self.usuario_destino} ({self.tipo})"

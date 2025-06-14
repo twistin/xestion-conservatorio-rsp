@@ -1,5 +1,10 @@
 from django.urls import path
 from . import views
+from rest_framework.routers import DefaultRouter
+from .views import NotificationViewSet
+
+router = DefaultRouter()
+router.register(r'notifications', NotificationViewSet, basename='notification')
 
 urlpatterns = [
     path('', views.root_welcome, name='root_welcome'),
@@ -28,3 +33,5 @@ urlpatterns = [
     path('enrollments/', views.enrollments_list, name='enrollments_list'),
     path('enrollments/<int:pk>/', views.enrollment_detail, name='enrollment_detail'),
 ]
+
+urlpatterns += router.urls

@@ -1,4 +1,4 @@
-import { Student, Professor, Course, Instrument, Enrollment, Grade, Payment, ScheduleItem, User, UserRole, AttendanceRecord, PaymentStatus, EnrollmentStatus } from '../types';
+import { Student, Professor, Course, Instrument, Enrollment, Grade, Payment, ScheduleItem, User, UserRole, AttendanceRecord, PaymentStatus, EnrollmentStatus, Notification } from '../types';
 import { mockStudents, mockProfessors, mockCourses, mockInstruments, mockEnrollments, mockGrades, mockPayments, mockSchedules, mockUsers, mockAttendance } from './mockData';
 
 // Simulate API delay
@@ -591,4 +591,58 @@ export const generateFamilyMessageIA = async (motivo: string, alumno: string): P
   });
   if (!res.ok) throw new Error('Error al generar el mensaje IA');
   return await res.json();
+};
+
+// === NOTIFICACIONS ===
+
+function notificationFromApi(apiNotification: any): Notification {
+  return {
+    id: String(apiNotification.id),
+    titulo: apiNotification.titulo,
+    mensaxe: apiNotification.mensaxe,
+    data_envio: apiNotification.data_envio,
+    usuario_destino: apiNotification.usuario_destino,
+    canal_preferido: apiNotification.canal_preferido,
+    lido: apiNotification.lido,
+    data_lectura: apiNotification.data_lectura,
+    tipo: apiNotification.tipo,
+    segmento: apiNotification.segmento,
+    datos_extra: apiNotification.datos_extra,
+  };
+}
+
+export const getNotifications = async (): Promise<Notification[]> => {
+  const res = await fetch(`${API_BASE}/notifications/`);
+  if (!res.ok) throw new Error('Erro ao obter as notificacións');
+  const data = await res.json();
+  return data.map(notificationFromApi);
+};
+
+export const createNotification = async (notification: Partial<Notification>): Promise<Notification> => {
+  const res = await fetch(`${API_BASE}/notifications/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(notification),
+  });
+  if (!res.ok) throw new Error('Erro ao crear a notificación');
+  return notificationFromApi(await res.json());
+};
+
+export const updateNotification = async (id: string, notification: Partial<Notification>): Promise<Notification> => {
+  const res = await fetch(`${API_BASE}/notifications/${id}/`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(notification),
+  });
+  if (!res.ok) throw new Error('Erro ao actualizar a notificación');
+  return notificationFromApi(await res.json());
+};
+
+export const deleteNotification = async (id: string): Promise<void> => {
+  const res = await fetch(`${API_BASE}/notifications/${id}/`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Erro ao eliminar a notificación');
+};
+
+export const markNotificationAsRead = async (id: string): Promise<Notification> => {
+  return updateNotification(id, { lido: true, data_lectura: new Date().toISOString() });
 };

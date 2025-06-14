@@ -158,3 +158,17 @@ export interface ToastMessage {
   message: string;
   duration?: number;
 }
+
+export interface Notification {
+  id: string;
+  titulo: string;
+  mensaxe: string;
+  data_envio: string;
+  usuario_destino?: string;
+  canal_preferido?: string;
+  lido: boolean;
+  data_lectura?: string;
+  tipo: 'xeral' | 'aviso' | 'automatico';
+  segmento?: string;
+  datos_extra?: any;
+}
