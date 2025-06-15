@@ -13,15 +13,15 @@ const PaymentFicha: React.FC<PaymentFichaProps> = ({ student, payments }) => {
   return (
     <div className="bg-gradient-to-br from-yellow-50 to-white rounded-xl shadow p-6">
       {/* Encabezado */}
-      <div className="flex items-center gap-4 mb-6 border-b pb-4">
-        <div className="flex-shrink-0">
-          <div className="w-16 h-16 rounded-full bg-yellow-200 flex items-center justify-center text-3xl text-yellow-700 shadow-inner">
-            <i className="fa-solid fa-euro-sign"></i>
-          </div>
+      <div className="flex flex-col items-center justify-center pt-8 pb-4 border-b border-neutral-100 dark:border-neutral-medium bg-gradient-to-r from-indigo-900 via-blue-800 to-blue-500 rounded-t-2xl">
+        <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center text-4xl text-blue-800 shadow-2xl mb-2 border-4 border-blue-400 dark:border-blue-700" style={{ fontFamily: 'Fira Sans, Fira, Arial, sans-serif' }}>
+          <i className="fa-solid fa-euro-sign"></i>
         </div>
-        <div>
-          <h2 className="text-2xl font-bold text-yellow-900 mb-1">Pagamentos de {student.firstName} {student.lastName}</h2>
-          <div className="text-sm text-neutral-medium">ID: {student.id}</div>
+        <h2 className="text-3xl font-extrabold text-white mb-1 text-center drop-shadow-lg" style={{ fontFamily: 'Fira Sans, Fira, Arial, sans-serif', letterSpacing: '0.02em' }}>
+          Pagamentos de {student.firstName} {student.lastName}
+        </h2>
+        <div className="flex flex-wrap gap-2 justify-center mt-1">
+          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">ID: {student.id}</span>
         </div>
       </div>
       {/* Estado de pagos */}

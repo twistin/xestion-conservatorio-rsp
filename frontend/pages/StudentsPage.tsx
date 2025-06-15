@@ -258,35 +258,60 @@ const StudentsPage: React.FC = () => {
                 <Spinner message="Cargando datos del alumno..." />
               </div>
             ) : (
-              <>
-                {/* FICHA MELLORADA EN GALEGO */}
-                <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow p-6">
-                  {/* Encabezado con avatar e nome */}
-                  <div className="flex items-center gap-4 mb-6 border-b pb-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 rounded-full bg-blue-200 flex items-center justify-center text-3xl text-blue-700 shadow-inner">
-                        <i className="fa-solid fa-user"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-blue-900 mb-1">Ficha de {studentDetails.firstName} {studentDetails.lastName}</h2>
-                      <div className="text-sm text-neutral-medium">ID: {studentDetails.id}</div>
-                    </div>
+              <div className="bg-white dark:bg-neutral-dark rounded-2xl shadow-xl p-0 md:p-0 max-w-[700px] mx-auto w-full">
+                {/* Encabezado con avatar y nombre */}
+                <div className="flex flex-col items-center justify-center pt-8 pb-4 border-b border-neutral-100 dark:border-neutral-medium bg-gradient-to-r from-indigo-900 via-blue-800 to-blue-500 rounded-t-2xl">
+                  <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center text-5xl text-blue-800 shadow-2xl mb-2 border-4 border-blue-400 dark:border-blue-700" style={{ fontFamily: 'Fira Sans, Fira, Arial, sans-serif' }}>
+                    <span className="font-bold tracking-wide">{studentDetails.firstName?.[0]}{studentDetails.lastName?.[0]}</span>
                   </div>
-                  {/* Datos persoais */}
-                  <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col gap-2">
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-envelope text-blue-400"></i> <span className="font-medium">Correo electrónico:</span> {studentDetails.email || <span className="italic">Non especificado</span>}</div>
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-phone text-blue-400"></i> <span className="font-medium">Teléfono:</span> {studentDetails.phoneNumber || <span className="italic">Non especificado</span>}</div>
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-cake-candles text-blue-400"></i> <span className="font-medium">Data de nacemento:</span> {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">Non especificada</span>}</div>
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-music text-blue-400"></i> <span className="font-medium">Instrumento:</span> {instrument?.name || <span className="italic">Non especificado</span>}</div>
-                      <div className="flex items-center gap-2 text-neutral-dark"><i className="fa-solid fa-location-dot text-blue-400"></i> <span className="font-medium">Enderezo:</span> {studentDetails.address || <span className="italic">Non especificado</span>}</div>
-                    </div>
+                  <h2 className="text-4xl font-extrabold text-white mb-1 text-center drop-shadow-lg" style={{ fontFamily: 'Fira Sans, Fira, Arial, sans-serif', letterSpacing: '0.02em' }}>{studentDetails.firstName} {studentDetails.lastName}</h2>
+                  <div className="flex flex-wrap gap-2 justify-center mt-1">
+                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">ID: {studentDetails.id}</span>
                   </div>
-                  {/* Matrículas activas */}
-                  <div className="mb-6">
-                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-graduation-cap"></i> Matrículas activas</div>
-                    <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
+                </div>
+                {/* Datos personales y académicos */}
+                <div className="p-6 flex flex-col gap-5">
+                  <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-envelope text-blue-400"></i> <span className="font-medium">Correo:</span>
+                    <span className="whitespace-nowrap overflow-x-auto max-w-full" style={{wordBreak:'keep-all'}}>{studentDetails.email || <span className="italic">Non especificado</span>}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-phone text-blue-400"></i> <span className="font-medium">Teléfono:</span>
+                    <span className="whitespace-nowrap overflow-x-auto max-w-full" style={{wordBreak:'keep-all'}}>{studentDetails.phoneNumber || <span className="italic">Non especificado</span>}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-cake-candles text-blue-400"></i> <span className="font-medium">Nascimento:</span> {studentDetails.dateOfBirth ? new Date(studentDetails.dateOfBirth).toLocaleDateString() : <span className="italic">Non especificada</span>}
+                  </div>
+                  <div className="flex items-start gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-location-dot text-blue-400 mt-1"></i> <span className="font-medium">Enderezo:</span>
+                    <span className="whitespace-normal break-words max-w-full">{studentDetails.address || <span className="italic">Non especificado</span>}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-music text-purple-400"></i> <span className="font-medium">Instrumento:</span> {instrument?.name || <span className="italic">Non especificado</span>}
+                  </div>
+                  <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-calendar-check text-green-400"></i> <span className="font-medium">Matrícula:</span> {studentDetails.enrollmentDate ? new Date(studentDetails.enrollmentDate).toLocaleDateString() : <span className="italic">N/D</span>}
+                  </div>
+                  <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-graduation-cap text-blue-400"></i> <span className="font-medium">Cursos activos:</span> {enrollments.filter(e => e.status === 'Active').length}
+                  </div>
+                  <div className="flex items-start gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-user-tie text-teal-400 mt-1"></i> <span className="font-medium">Profesorado:</span>
+                    <span className="flex flex-wrap gap-2">
+                      {professors.length > 0 ? professors.map((p, idx) => (
+                        <span key={p.id} className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold">{p.firstName} {p.lastName}{idx < professors.length-1 ? ',' : ''}</span>
+                      )) : <span className="italic">N/D</span>}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+                    <i className="fa-solid fa-certificate text-yellow-400"></i> <span className="font-medium">Nivel:</span> {courses.length > 0 ? courses[0].level : <span className="italic">N/D</span>}
+                  </div>
+                </div>
+                {/* Secciones adicionales: Matrículas, Progreso, IA, etc. */}
+                <div className="px-6 pb-6 flex flex-col gap-8">
+                  <div className="mb-0">
+                    <div className="font-semibold text-blue-800 dark:text-blue-200 mb-2 flex items-center gap-2"><i className="fa-solid fa-graduation-cap"></i> Matrículas activas</div>
+                    <ul className="text-neutral-medium text-sm ml-4 mt-2 list-disc space-y-1">
                       {enrollments.filter(e => e.status === 'Active').length === 0 ? <li>Non hai matrículas activas</li> :
                         enrollments.filter(e => e.status === 'Active').map(e => {
                           const course = courses.find(c => c.id === e.courseId);
@@ -294,10 +319,9 @@ const StudentsPage: React.FC = () => {
                         })}
                     </ul>
                   </div>
-                  {/* Asignación a cursos e profesores */}
-                  <div className="mb-6">
-                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-chalkboard-user"></i> Cursos e profesorado asignado</div>
-                    <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
+                  <div className="mb-0">
+                    <div className="font-semibold text-blue-800 dark:text-blue-200 mb-2 flex items-center gap-2"><i className="fa-solid fa-chalkboard-user"></i> Cursos e profesorado asignado</div>
+                    <ul className="text-neutral-medium text-sm ml-4 mt-2 list-disc space-y-1">
                       {enrollments.length === 0 ? <li>Non hai asignacións</li> :
                         enrollments.map(e => {
                           const course = courses.find(c => c.id === e.courseId);
@@ -306,10 +330,9 @@ const StudentsPage: React.FC = () => {
                         })}
                     </ul>
                   </div>
-                  {/* Seguimento do progreso */}
-                  <div className="mb-6">
-                    <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-chart-line"></i> Seguimento do progreso</div>
-                    <ul className="text-neutral-medium text-sm ml-4 mt-1 list-disc">
+                  <div className="mb-0">
+                    <div className="font-semibold text-blue-800 dark:text-blue-200 mb-2 flex items-center gap-2"><i className="fa-solid fa-chart-line"></i> Seguimento do progreso</div>
+                    <ul className="text-neutral-medium text-sm ml-4 mt-2 list-disc space-y-2">
                       {enrollments.length === 0 ? <li>Non hai cualificacións</li> :
                         enrollments.map(e => {
                           const enrollmentGrades = grades.filter(g => g.enrollmentId === e.id);
@@ -317,7 +340,7 @@ const StudentsPage: React.FC = () => {
                           return (
                             <li key={e.id} className="mb-2">
                               <b>{courses.find(c => c.id === e.courseId)?.name || 'Curso'}:</b>
-                              <ul className="ml-4">
+                              <ul className="ml-4 space-y-1">
                                 {enrollmentGrades.slice(0,3).map(g => (
                                   <li key={g.id} className="flex items-center gap-2">
                                     <i className="fa-solid fa-star text-yellow-400"></i>
@@ -330,63 +353,21 @@ const StudentsPage: React.FC = () => {
                         })}
                     </ul>
                   </div>
-                  {/* FILTROS E ESTADO */}
-                  <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Filtros visuales */}
-                    <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col gap-2">
-                      <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-filter"></i> Filtros rápidos</div>
-                      <div className="flex flex-wrap gap-2">
-                        {/* Nivel (placeholder: se asume que el nivel está en el curso) */}
-                        {courses.length > 0 && (
-                          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
-                            Nivel: {courses.find(c => enrollments.some(e => e.courseId === c.id))?.level || 'N/D'}
-                          </span>
-                        )}
-                        {/* Curso */}
-                        {courses.length > 0 && (
-                          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
-                            Curso: {courses.find(c => enrollments.some(e => e.courseId === c.id))?.name || 'N/D'}
-                          </span>
-                        )}
-                        {/* Instrumento */}
-                        <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">
-                          Instrumento: {instrument?.name || 'N/D'}
-                        </span>
-                        {/* Edad */}
-                        <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">
-                          Idade: {studentDetails.dateOfBirth ? Math.floor((new Date().getTime() - new Date(studentDetails.dateOfBirth).getTime()) / (365.25*24*60*60*1000)) + ' anos' : 'N/D'}
-                        </span>
-                      </div>
-                    </div>
-                    {/* Estado de pagos/documentación (placeholder visual) */}
-                    <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col gap-2">
-                      <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><i className="fa-solid fa-file-invoice-dollar"></i> Estado de pagos / documentación</div>
-                      <div className="flex flex-col gap-1 text-sm">
-                        {/* Aquí se pueden mostrar estados reales si hay datos, por ahora es visual */}
-                        <span className="flex items-center gap-2"><i className="fa-solid fa-circle-check text-green-500"></i> Pagos ao día</span>
-                        <span className="flex items-center gap-2"><i className="fa-solid fa-file-circle-check text-green-500"></i> Documentación completa</span>
-                        {/* Si hay lógica real, cambiar estos estados según los datos */}
-                      </div>
-                    </div>
-                  </div>
-                  {/* BLOQUE IA: Predición, Suxestións, Alertas */}
-                  <div className="mb-6">
-                    <div className="bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg shadow-sm p-4">
-                      <div className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                  {/* IA educativa */}
+                  <div className="mb-0">
+                    <div className="bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg shadow-sm p-4 flex flex-col gap-2">
+                      <div className="font-semibold text-blue-800 dark:text-blue-200 mb-2 flex items-center gap-2">
                         <i className="fa-solid fa-robot"></i> IA educativa
                       </div>
                       <ul className="text-neutral-medium text-sm ml-2 mt-1 space-y-2">
-                        {/* Predición de abandono */}
                         <li className="flex items-center gap-2">
                           <i className="fa-solid fa-person-walking-arrow-right text-red-400"></i>
-                          <span><b>Predición de abandono:</b> <span className="text-red-600 font-semibold">Baixo risco</span> {/* Cambiar dinámicamente */}</span>
+                          <span><b>Predición de abandono:</b> <span className="text-red-600 font-semibold">Baixo risco</span></span>
                         </li>
-                        {/* Suxestións de itinerarios */}
                         <li className="flex items-center gap-2">
                           <i className="fa-solid fa-route text-green-500"></i>
                           <span><b>Suxestións de itinerario:</b> Proponse continuar con "Grao Profesional" en Piano</span>
                         </li>
-                        {/* Alertas de inasistencia ou baixo rendemento */}
                         <li className="flex items-center gap-2">
                           <i className="fa-solid fa-triangle-exclamation text-yellow-500"></i>
                           <span><b>Alertas:</b> Sen incidencias recentes</span>
@@ -394,12 +375,25 @@ const StudentsPage: React.FC = () => {
                       </ul>
                     </div>
                   </div>
-                  {/* Botóns de acción */}
-                  <div className="flex justify-end gap-2 mt-4 border-t pt-4">
+                  {/* Estado de pagos/documentación */}
+                  <div className="mb-0 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white dark:bg-neutral-dark rounded-lg shadow-sm p-4 flex flex-col gap-2">
+                      <div className="font-semibold text-blue-800 dark:text-blue-200 mb-2 flex items-center gap-2 whitespace-normal break-words">
+                        <i className="fa-solid fa-file-invoice-dollar"></i> <span>Estado de pagos / documentación</span>
+                      </div>
+                      <div className="flex flex-col gap-1 text-sm">
+                        <span className="flex items-center gap-2"><i className="fa-solid fa-circle-check text-green-500"></i> Pagos ao día</span>
+                        <span className="flex items-center gap-2"><i className="fa-solid fa-file-circle-check text-green-500"></i> Documentación completa</span>
+                      </div>
+                    </div>
+                    <div></div>
+                  </div>
+                  {/* Botones de acción */}
+                  <div className="flex flex-col md:flex-row justify-end gap-2 mt-8 border-t pt-6">
                     <Button variant="danger" onClick={() => handleDeleteStudent(studentDetails.id)}>
                       <i className="fa-solid fa-user-xmark mr-2"></i> Dar de baixa
                     </Button>
-                    <Button variant="primary" className="ml-2" onClick={() => {
+                    <Button variant="primary" className="ml-0 md:ml-2" onClick={() => {
                       setShowFichaModal(false);
                       handleEditStudent(studentDetails);
                     }}>
@@ -407,7 +401,7 @@ const StudentsPage: React.FC = () => {
                     </Button>
                   </div>
                 </div>
-              </>
+              </div>
             )}
           </Modal>
         )}
