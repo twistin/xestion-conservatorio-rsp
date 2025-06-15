@@ -9,7 +9,7 @@ const NotificationCard: React.FC<{
   onRead: (id: string) => void;
   onDelete: (id: string) => void;
 }> = ({ notification, onRead, onDelete }) => (
-  <Card style={{ marginBottom: 16, background: notification.lido ? '#f5f5f5' : '#e6f7ff' }}>
+  <Card className={notification.lido ? 'bg-neutral-100' : 'bg-blue-50'}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>
         <strong>{notification.titulo}</strong>
@@ -24,9 +24,9 @@ const NotificationCard: React.FC<{
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {!notification.lido && (
-          <Button onClick={() => onRead(notification.id)} size="small" color="primary">Marcar como lida</Button>
+          <Button onClick={() => onRead(notification.id)} size="sm" color="primary">Marcar como lida</Button>
         )}
-        <Button onClick={() => onDelete(notification.id)} size="small" color="danger">Eliminar</Button>
+        <Button onClick={() => onDelete(notification.id)} size="sm" color="danger">Eliminar</Button>
       </div>
     </div>
   </Card>
