@@ -81,8 +81,8 @@ const ProfessorForm: React.FC<ProfessorFormProps> = ({ professor, onSave, onCanc
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex flex-col items-center justify-center pt-8 pb-4 border-b border-neutral-100 dark:border-neutral-medium" style={{ background: 'linear-gradient(90deg, #064e3b 0%, #059669 60%, #34d399 100%)' }}>
-        <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center text-5xl shadow-2xl mb-2 border-4" style={{ fontFamily: 'Fira Sans, Fira, Arial, sans-serif', borderColor: '#34d399' }}>
-          <span className="font-bold tracking-wide" style={{ color: '#059669' }}>{formData.firstName?.[0]}{formData.lastName?.[0]}</span>
+        <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center text-5xl shadow-2xl mb-2" style={{ fontFamily: 'Fira Sans, Fira, Arial, sans-serif', border: '4px solid #34d399' }}>
+          <span className="font-bold tracking-wide" style={{ color: 'rgb(16, 185, 129) !important' }}>{formData.firstName?.[0]}{formData.lastName?.[0]}</span>
         </div>
         <h2 className="text-4xl font-extrabold text-white mb-1 text-center drop-shadow-lg" style={{ fontFamily: 'Fira Sans, Fira, Arial, sans-serif', letterSpacing: '0.02em' }}>{formData.firstName} {formData.lastName}</h2>
         {professor?.id && (
