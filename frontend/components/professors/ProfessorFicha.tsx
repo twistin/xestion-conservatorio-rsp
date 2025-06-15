@@ -11,7 +11,7 @@ const ProfessorFicha: React.FC<ProfessorFichaProps> = ({ professor }) => {
   return (
     <div className="bg-white dark:bg-neutral-dark rounded-2xl shadow-xl p-0 md:p-0 max-w-2xl mx-auto w-full">
       {/* Encabezado con avatar y nombre */}
-      <div className="flex flex-col items-center justify-center pt-8 pb-4 border-b border-neutral-100 dark:border-neutral-medium bg-gradient-to-r from-indigo-900 via-blue-800 to-blue-500 rounded-t-2xl">
+      <div className="flex flex-col items-center justify-center pt-8 pb-4 border-b border-neutral-100 dark:border-neutral-medium bg-gradient-to-r from-emerald-900 via-emerald-700 to-emerald-500 rounded-t-2xl">
         <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center text-5xl text-blue-800 shadow-2xl mb-2 border-4 border-blue-400 dark:border-blue-700" style={{ fontFamily: 'Fira Sans, Fira, Arial, sans-serif' }}>
           <span className="font-bold tracking-wide">{professor.firstName?.[0]}{professor.lastName?.[0]}</span>
         </div>
@@ -23,14 +23,35 @@ const ProfessorFicha: React.FC<ProfessorFichaProps> = ({ professor }) => {
       {/* Datos profesionales */}
       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light"><i className="fa-solid fa-envelope text-teal-400"></i> <span className="font-medium">Correo:</span> {professor.email || <span className="italic">Non especificado</span>}</div>
-          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light"><i className="fa-solid fa-microscope text-teal-400"></i> <span className="font-medium">Especialidade:</span> {professor.specialty || <span className="italic">Non especificada</span>}</div>
-          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light"><i className="fa-solid fa-calendar-days text-teal-400"></i> <span className="font-medium">Contratación:</span> {professor.hireDate ? new Date(professor.hireDate).toLocaleDateString() : <span className="italic">Non especificada</span>}</div>
-        </div>
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light"><i className="fa-solid fa-phone text-teal-400"></i> <span className="font-medium">Teléfono:</span> {professor.phoneNumber || <span className="italic">Non especificado</span>}</div>
-          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light"><i className="fa-solid fa-door-open text-teal-400"></i> <span className="font-medium">Aula(s):</span> {professor.classrooms || <span className="italic">Non especificadas</span>}</div>
-          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light"><i className="fa-solid fa-clock text-teal-400"></i> <span className="font-medium">Horario titoría:</span> {professor.tutoringSchedule || <span className="italic">Non especificado</span>}</div>
+          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+            <i className="fa-solid fa-envelope text-emerald-400"></i>
+            <span className="font-medium">Correo:</span>
+            <span className="truncate max-w-[260px] md:max-w-[340px] lg:max-w-[420px] xl:max-w-[520px] 2xl:max-w-[700px]" title={professor.email}>{professor.email || <span className="italic">Non especificado</span>}</span>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-1">
+            <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+              <i className="fa-solid fa-phone text-emerald-400"></i>
+              <span className="font-medium">Teléfono:</span>
+              <span>{professor.phoneNumber || <span className="italic">Non especificado</span>}</span>
+            </div>
+            <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+              <i className="fa-solid fa-door-open text-emerald-400"></i>
+              <span className="font-medium">Aula(s):</span>
+              <span>{professor.classrooms || <span className="italic">Non especificadas</span>}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+            <i className="fa-solid fa-microscope text-emerald-400"></i>
+            <span className="font-medium">Especialidade:</span> {professor.specialty || <span className="italic">Non especificada</span>}
+          </div>
+          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+            <i className="fa-solid fa-calendar-days text-emerald-400"></i>
+            <span className="font-medium">Contratación:</span> {professor.hireDate ? new Date(professor.hireDate).toLocaleDateString() : <span className="italic">Non especificada</span>}
+          </div>
+          <div className="flex items-center gap-2 text-neutral-dark dark:text-neutral-light">
+            <i className="fa-solid fa-clock text-emerald-400"></i>
+            <span className="font-medium">Horario titoría:</span> {professor.tutoringSchedule || <span className="italic">Non especificado</span>}
+          </div>
         </div>
       </div>
       {/* Secciones adicionales */}
