@@ -87,6 +87,9 @@ export interface Grade {
   score: number; // e.g., 0-100
   dateGiven: string;
   comments?: string;
+  tecnica?: number;
+  interpretacion?: number;
+  asistencia?: number;
 }
 
 export enum AttendanceStatus {

@@ -88,9 +88,8 @@ const App: React.FC = () => {
                 {/* Professor specific routes */}
                  {user?.role === 'Professor' && (
                   <>
-                    <Route path="/assigned-students" element={<ComingSoon featureName="Assigned Students" />} />
-                    <Route path="/manage-grades" element={<ComingSoon featureName="Manage Grades" />} />
                     <Route path="/professor-assigned-students" element={<ProfessorAssignedStudentsPage />} />
+                    <Route path="/manage-grades" element={<ProfessorEvaluationsPage />} />
                     <Route path="/professor-schedule" element={<ProfessorSchedulePage />} />
                     <Route path="/professor-evaluations" element={<ProfessorEvaluationsPage />} />
                     <Route path="/professor-resources" element={<ProfessorResourcesPage />} />

@@ -1,5 +1,5 @@
-import { Student, Professor, Course, Instrument, Enrollment, Grade, Payment, ScheduleItem, User, UserRole, AttendanceRecord, PaymentStatus, EnrollmentStatus, Notification } from '../types';
-import { mockStudents, mockProfessors, mockCourses, mockInstruments, mockEnrollments, mockGrades, mockPayments, mockSchedules, mockUsers, mockAttendance } from './mockData';
+import { Student, Professor, Course, Instrument, Enrollment, Grade, ScheduleItem, User, UserRole, AttendanceRecord, EnrollmentStatus, Notification } from '../types';
+import { mockStudents, mockProfessors, mockCourses, mockEnrollments, mockGrades, mockSchedules, mockUsers, mockAttendance } from './mockData';
 
 // Simulate API delay
 const API_DELAY = 100; // Reduced delay for quicker UI updates
@@ -90,8 +90,13 @@ export const getProfessorById = async (id: string): Promise<Professor | undefine
   return professorFromApi(data);
 };
 
-export const getProfessorByUserId = async (userId: string): Promise<Professor | undefined> =>
-  simulateApiCall(mockProfessors.find(p => p.userId === userId));
+// Forzar uso de mock para profesores (pruebas)
+export const getProfessorByUserId = async (userId: string): Promise<Professor | undefined> => {
+  // Buscar por userId y por id (para máxima compatibilidad en pruebas)
+  return simulateApiCall(
+    mockProfessors.find(p => p.userId === userId || p.id === userId)
+  );
+};
 
 
 // Instruments
@@ -184,6 +189,16 @@ export const getEnrollmentsByCourseId = async (courseId: string): Promise<Enroll
 
 
 // Grades
+export const addGrade = async (grade: Omit<Grade, 'id'>): Promise<Grade> => {
+  // Simulación: asignar un id único y añadir a mockGrades
+  const newGrade: Grade = {
+    id: `grade-${Date.now()}`,
+    ...grade,
+  };
+  mockGrades.push(newGrade);
+  return simulateApiCall(newGrade);
+};
+
 export const getGradesByEnrollmentId = async (enrollmentId: string): Promise<Grade[]> =>
   simulateApiCall(mockGrades.filter(g => g.enrollmentId === enrollmentId));
 
@@ -377,24 +392,15 @@ export const deleteItem = async (id: string, type: string): Promise<void> => {
 export const getDashboardMetrics = async (role: UserRole, userId: string) => {
   if (role === UserRole.Admin) {
     // Obtener datos reales del backend
-    const [students, professors, courses, payments, enrollments] = await Promise.all([
+    const [students, professors, courses, enrollments] = await Promise.all([
       getStudents(),
       getProfessors(),
       getCourses(),
-      getAllPayments(),
       getAllEnrollments()
     ]);
     const now = new Date();
     // Cursos activos: sin fecha de fin o fecha de fin en el futuro
     const activeCourses = courses.filter((c: any) => !c.endDate || new Date(c.endDate) > now).length;
-    // Pagos del mes actual y pagados
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    const totalPayments = payments.filter((p: any) => {
-      if (p.status !== PaymentStatus.Paid || !p.paymentDate) return false;
-      const d = new Date(p.paymentDate);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    }).reduce((sum: number, p: any) => sum + p.amount, 0);
     // Matrículas recientes (últimas 5)
     const recentEnrollments = enrollments
       .sort((a: any, b: any) => new Date(b.enrollmentDate || b.enrollment_date).getTime() - new Date(a.enrollmentDate || a.enrollment_date).getTime())
@@ -408,34 +414,40 @@ export const getDashboardMetrics = async (role: UserRole, userId: string) => {
       totalStudents: students.length,
       totalProfessors: professors.length,
       activeCourses,
-      totalPayments,
+      totalPayments: 0, // No hay pagos en mock
       recentEnrollments
     };
   }
   if (role === UserRole.Professor) {
-    const professor = mockProfessors.find(p => p.userId === userId);
+    // Buscar el profesor por userId y obtener su id real
+    const professor = mockProfessors.find(p => p.userId === userId || p.id === userId);
     if (!professor) return simulateApiCall(null);
+    // Cursos asignados por id real
     const assignedCourses = mockCourses.filter(c => c.teacherId === professor.id);
+    // Alumnado impartido: alumnos únicos en matrículas de esos cursos
     const studentsInCourses = new Set<string>();
     assignedCourses.forEach(course => {
-        mockEnrollments.filter(e => e.courseId === course.id && e.status === EnrollmentStatus.Active).forEach(e => studentsInCourses.add(e.studentId));
+      mockEnrollments.filter(e => e.courseId === course.id && e.status === EnrollmentStatus.Active).forEach(e => studentsInCourses.add(e.studentId));
     });
+    // Clases hoy: buscar en mockSchedules por teacherId y día de la semana
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    const todayNormalized = today.charAt(0).toUpperCase() + today.slice(1).toLowerCase();
+    const upcomingClassesToday = mockSchedules.filter(s => s.teacherId === professor.id && s.dayOfWeek.toLowerCase() === todayNormalized.toLowerCase()).length;
     return simulateApiCall({
-        assignedCoursesCount: assignedCourses.length,
-        totalStudentsTaught: studentsInCourses.size,
-        upcomingClassesToday: mockSchedules.filter(s => s.teacherId === professor.id && s.dayOfWeek.toLowerCase() === new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()).length,
+      assignedCoursesCount: assignedCourses.length,
+      totalStudentsTaught: studentsInCourses.size,
+      upcomingClassesToday
     });
   }
    if (role === UserRole.Student) {
     const student = mockStudents.find(s => s.userId === userId);
     if (!student) return simulateApiCall(null);
     const enrolledCourses = mockEnrollments.filter(e => e.studentId === student.id && e.status === EnrollmentStatus.Active).length;
-    const pendingPayments = mockPayments.filter(p => p.studentId === student.id && p.status === PaymentStatus.Pending).length;
     // Simplificado: Necesitaría una lógica más robusta para "próximas tareas" reales
     const upcomingAssignments = mockGrades.filter(g => mockEnrollments.some(e => e.id === g.enrollmentId && e.studentId === student.id && e.status === EnrollmentStatus.Active) && new Date(g.dateGiven) > new Date()).length; 
      return simulateApiCall({
         enrolledCourses,
-        pendingPayments,
+        pendingPayments: 0, // No hay pagos en mock
         upcomingAssignments
     });
   }
