@@ -1,4 +1,3 @@
-
 import { User, UserRole, Student, Professor, Instrument, Course, CourseLevel, Enrollment, EnrollmentStatus, Grade, Payment, PaymentStatus, ScheduleItem, AttendanceRecord, AttendanceStatus } from '../types';
 
 export const mockUsers: User[] = [
@@ -60,9 +59,11 @@ export const mockPayments: Payment[] = [
 export const mockSchedules: ScheduleItem[] = [
   { id: 'sched-1', title: 'Piano Basics (C1)', dayOfWeek: 'Monday', startTime: '14:00', endTime: '15:30', type: 'Course', location: 'Room 101', courseId: 'course-1', teacherId: 'prof-1', relatedUserIds: ['stud-1'] },
   { id: 'sched-2', title: 'Music Theory I (C3)', dayOfWeek: 'Tuesday', startTime: '10:00', endTime: '11:30', type: 'Course', location: 'Room 201', courseId: 'course-3', teacherId: 'prof-1', relatedUserIds: ['stud-1'] },
-  { id: 'sched-3', title: 'Intermediate Guitar (C2)', dayOfWeek: 'Wednesday', startTime: '16:00', endTime: '17:30', type: 'Course', location: 'Room 102', courseId: 'course-2', teacherId: 'prof-2', relatedUserIds: ['stud-2'] },
+  { id: 'sched-3', title: 'Advanced Violin (C4)', dayOfWeek: 'Wednesday', startTime: '12:00', endTime: '13:30', type: 'Course', location: 'Room 103', courseId: 'course-4', teacherId: 'prof-1', relatedUserIds: ['stud-3'] },
   { id: 'sched-4', title: 'Piano Lesson - B. Wayne', dayOfWeek: 'Friday', startTime: '09:00', endTime: '10:00', type: 'IndividualLesson', location: 'Practice Room A', studentId: 'stud-1', teacherId: 'prof-1' },
   { id: 'sched-5', title: 'Faculty Meeting', dayOfWeek: 'Monday', startTime: '09:00', endTime: '10:00', type: 'Event', location: 'Conference Hall', relatedUserIds: ['prof-1', 'prof-2'] },
+  { id: 'sched-6', title: 'Guitar Masterclass', dayOfWeek: 'Thursday', startTime: '17:00', endTime: '18:30', type: 'Course', location: 'Room 202', courseId: 'course-2', teacherId: 'prof-2', relatedUserIds: ['stud-2'] },
+  { id: 'sched-7', title: 'Clase Extra', dayOfWeek: 'Friday', startTime: '11:00', endTime: '12:00', type: 'Course', location: 'Room 105', courseId: 'course-1', teacherId: 'prof-1', relatedUserIds: ['stud-1'] },
 ];
 
 export const mockAttendance: AttendanceRecord[] = [
