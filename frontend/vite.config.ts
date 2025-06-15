@@ -12,6 +12,15 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
-      }
+      },
+      server: {
+        proxy: {
+          '/api': {
+            target: 'https://xestion-conservatorio-rsp.onrender.com',
+            changeOrigin: true,
+            secure: false,
+          },
+        },
+      },
     };
 });
