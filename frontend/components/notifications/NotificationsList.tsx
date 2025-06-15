@@ -3,6 +3,7 @@ import Button from '../ui/Button';
 import Card from '../ui/Card';
 import { Notification } from '../../types';
 import { getNotifications, markNotificationAsRead, deleteNotification } from '../../services/dataService';
+import NotificationForm from './NotificationForm';
 
 const NotificationCard: React.FC<{
   notification: Notification;
@@ -63,12 +64,17 @@ const NotificationsList: React.FC = () => {
     fetchNotifications();
   };
 
+  const handleCreated = (n: Notification) => {
+    fetchNotifications();
+  };
+
   if (loading) return <div>Cargando notificacións...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
   if (notifications.length === 0) return <div>Non hai notificacións.</div>;
 
   return (
     <div>
+      <NotificationForm onCreated={handleCreated} />
       {notifications.map(n => (
         <NotificationCard key={n.id} notification={n} onRead={handleRead} onDelete={handleDelete} />
       ))}
