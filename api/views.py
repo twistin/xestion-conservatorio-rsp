@@ -327,16 +327,15 @@ from datetime import datetime
 
 @api_view(['GET'])
 def ia_demand_prediction(request):
-    # Obtener todas las matrículas y cursos
+    # Predicción de demanda por curso usando Enrollment
     enrollments = []
     for c in Course.objects.all():
-        # Contar matrículas por año para este curso
         years = {}
-        for s in c.student_set.all():
-            year = s.enrollment_date.year if s.enrollment_date else None
+        course_enrollments = Enrollment.objects.filter(course=c)
+        for e in course_enrollments:
+            year = e.enrollment_date.year if e.enrollment_date else None
             if year:
                 years[year] = years.get(year, 0) + 1
-        # Ordenar años y calcular tendencia simple (diferencia entre últimos dos años)
         sorted_years = sorted(years.items())
         trend = 0
         if len(sorted_years) >= 2:
