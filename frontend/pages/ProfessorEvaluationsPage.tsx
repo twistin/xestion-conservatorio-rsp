@@ -98,23 +98,23 @@ const ProfessorEvaluationsPage: React.FC = () => {
 
   return (
     <PageContainer title="Xestionar Cualificacións">
-      <Card title="Curso" className="mb-4">
+      <Card title="Curso" className="mb-4 bg-white dark:bg-neutral-dark">
         <div className="flex flex-wrap gap-2 items-center">
           <span>Selecciona curso:</span>
-          <select value={selectedCourse || ''} onChange={e => setSelectedCourse(e.target.value)} className="border rounded px-2 py-1">
+          <select value={selectedCourse || ''} onChange={e => setSelectedCourse(e.target.value)} className="border rounded px-2 py-1 bg-white dark:bg-neutral-dark text-neutral-dark dark:text-neutral-light">
             {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <span>Trimestre:</span>
-          <select value={selectedTrim} onChange={e => setSelectedTrim(e.target.value)} className="border rounded px-2 py-1">
+          <select value={selectedTrim} onChange={e => setSelectedTrim(e.target.value)} className="border rounded px-2 py-1 bg-white dark:bg-neutral-dark text-neutral-dark dark:text-neutral-light">
             {TRIMESTRES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
       </Card>
-      <Card title="Notas por alumno/a">
+      <Card title="Notas por alumno/a" className="bg-white dark:bg-neutral-dark">
         <div className="overflow-x-auto">
-          <table className="min-w-full text-sm border">
-            <thead>
-              <tr className="bg-neutral-light">
+          <table className="min-w-full text-sm border bg-white dark:bg-neutral-dark">
+            <thead className="bg-neutral-light dark:bg-neutral-800">
+              <tr>
                 <th>Alumno/a</th>
                 {EVALUATION_FIELDS.map(f => <th key={f.key}>{f.label}</th>)}
                 <th>Comentario</th>

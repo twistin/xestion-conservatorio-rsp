@@ -6,6 +6,7 @@ import * as dataService from '../services/dataService';
 import { Professor, Course, Enrollment, Student, Grade, Instrument } from '../types';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import jsPDF from 'jspdf';
 
 const ProfessorAssignedStudentsPage: React.FC = () => {
   const { user } = useAuth();
@@ -19,6 +20,9 @@ const ProfessorAssignedStudentsPage: React.FC = () => {
   const [obsLoading, setObsLoading] = useState<string | null>(null); // studentId-courseId
   const [obsEdit, setObsEdit] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [pdfLoading, setPdfLoading] = useState<string | null>(null); // studentId-courseId
+  const [sendLoading, setSendLoading] = useState<string | null>(null); // studentId-courseId
+  const [sendSuccess, setSendSuccess] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,6 +100,50 @@ const ProfessorAssignedStudentsPage: React.FC = () => {
     }
   };
 
+  // Generar PDF del boletín
+  const handleGeneratePDF = (student: Student, course: Course, grades: Grade[], observation: string) => {
+    setPdfLoading(`${student.id}-${course.id}`);
+    try {
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text('Boletín de Progreso', 10, 15);
+      doc.setFontSize(12);
+      doc.text(`Alumno/a: ${student.firstName} ${student.lastName}`, 10, 30);
+      doc.text(`Curso: ${course.name}`, 10, 38);
+      doc.text(`Instrumento: ${instruments.find(i => i.id === student.instrumentId)?.name || 'N/D'}`, 10, 46);
+      doc.text('Cualificacións recentes:', 10, 58);
+      let y = 66;
+      if (grades.length === 0) {
+        doc.text('Sen cualificacións recentes', 12, y);
+        y += 8;
+      } else {
+        grades.forEach(g => {
+          doc.text(`${g.assignmentName}: ${g.score}/100 (${new Date(g.dateGiven).toLocaleDateString('gl-ES')})`, 12, y);
+          y += 8;
+        });
+      }
+      doc.text('Observacións:', 10, y + 4);
+      doc.setFontSize(11);
+      doc.text(observation || 'Sen observacións.', 12, y + 12, { maxWidth: 180 });
+      doc.save(`boletin_${student.lastName}_${student.firstName}_${course.name}.pdf`);
+    } catch (e) {
+      alert('Erro ao xerar o PDF');
+    } finally {
+      setPdfLoading(null);
+    }
+  };
+
+  // Simular envío de cualificación (placeholder)
+  const handleSendGrade = (student: Student, course: Course) => {
+    const key = `${student.id}-${course.id}`;
+    setSendLoading(key);
+    setTimeout(() => {
+      setSendLoading(null);
+      setSendSuccess(prev => ({ ...prev, [key]: true }));
+      setTimeout(() => setSendSuccess(prev => ({ ...prev, [key]: false })), 2500);
+    }, 1500);
+  };
+
   if (isLoading) return <PageContainer title="Alumnado asignado"><div className="h-32 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div></PageContainer>;
   if (!professor) return <PageContainer title="Alumnado asignado"><p>Non se atoparon datos do profesor/a.</p></PageContainer>;
 
@@ -110,7 +158,7 @@ const ProfessorAssignedStudentsPage: React.FC = () => {
           const courseEnrollments = enrollments.filter(e => e.courseId === course.id);
           const courseStudents = students.filter(s => courseEnrollments.some(e => e.studentId === s.id));
           return (
-            <Card key={course.id} title={`Curso: ${course.name}`} className="mb-6">
+            <Card key={course.id} title={`Curso: ${course.name}`} className="mb-6 bg-white dark:bg-neutral-dark">
               {courseStudents.length === 0 ? (
                 <p className="text-neutral-medium">Non hai alumnado asignado a este curso.</p>
               ) : (
@@ -137,21 +185,21 @@ const ProfessorAssignedStudentsPage: React.FC = () => {
                         <div className="flex-1 min-w-[200px] mt-2 md:mt-0">
                           <div className="font-semibold text-blue-800 dark:text-blue-200 mb-1 text-xs flex items-center gap-2"><i className="fa-solid fa-graduation-cap"></i> Historial académico</div>
                           {studentGrades.length === 0 ? <div className="text-xs text-neutral-medium">Sen cualificacións recentes</div> : (
-                            <ul className="text-xs text-neutral-medium space-y-1">
+                            <ul className="text-xs text-neutral-medium space-y-1 bg-white dark:bg-neutral-dark">
                               {studentGrades.map(g => (
                                 <li key={g.id}><b>{g.assignmentName}:</b> {g.score}/100 <span className="text-neutral-light">({new Date(g.dateGiven).toLocaleDateString('gl-ES')})</span> {g.comments && <span className="text-neutral-medium">- {g.comments}</span>}</li>
                               ))}
                             </ul>
                           )}
                         </div>
-                        <div className="flex-1 min-w-[200px] mt-2 md:mt-0">
+                        <div className="flex-1 min-w-[200px] mt-2 md:mt-0 flex flex-col gap-2">
                           <div className="font-semibold text-emerald-800 dark:text-emerald-200 mb-1 text-xs flex items-center gap-2"><i className="fa-solid fa-notes-medical"></i> Observacións persoais</div>
                           <label htmlFor={`obs-${student.id}-${course.id}`} className="sr-only">Observacións persoais para {student.firstName} {student.lastName} en {course.name}</label>
                           <textarea
                             id={`obs-${student.id}-${course.id}`}
                             name={`obs-${student.id}-${course.id}`}
                             autoComplete="off"
-                            className="w-full border border-emerald-200 dark:border-neutral-700 rounded p-2 text-xs bg-white dark:bg-neutral-dark focus:ring-2 focus:ring-emerald-400"
+                            className="w-full border border-emerald-200 dark:border-neutral-700 rounded p-2 text-xs bg-white dark:bg-neutral-dark focus:ring-2 focus:ring-emerald-400 text-neutral-dark dark:text-neutral-light"
                             rows={3}
                             placeholder="Observacións pedagóxicas, seguimento, incidencias..."
                             value={obsEdit[obsKey] !== undefined ? obsEdit[obsKey] : (observations[obsKey] || '')}
@@ -162,6 +210,14 @@ const ProfessorAssignedStudentsPage: React.FC = () => {
                               {obsLoading===obsKey ? 'Gardando...' : 'Gardar'}
                             </Button>
                             {observations[obsKey] && <span className="text-xs text-neutral-medium">Última actualización gardada</span>}
+                          </div>
+                          <div className="flex gap-2 mt-2">
+                            <Button size="sm" variant="secondary" onClick={() => handleGeneratePDF(student, course, studentGrades, observations[obsKey])} disabled={pdfLoading===obsKey}>
+                              {pdfLoading===obsKey ? 'Xerando PDF...' : 'Xerar boletín PDF'}
+                            </Button>
+                            <Button size="sm" variant="primary" onClick={() => handleSendGrade(student, course)} disabled={sendLoading===obsKey}>
+                              {sendLoading===obsKey ? 'Enviando...' : sendSuccess[obsKey] ? 'Enviado!' : 'Enviar cualificación'}
+                            </Button>
                           </div>
                         </div>
                       </li>
