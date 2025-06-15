@@ -49,14 +49,14 @@ const ProfessorAssignedStudentsPage: React.FC = () => {
     fetchData();
   }, [user]);
 
-  if (isLoading) return <PageContainer title="Estudiantes Asignados"><div className="h-32 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div></PageContainer>;
-  if (!professor) return <PageContainer title="Estudiantes Asignados"><p>No se encontraron datos del profesor.</p></PageContainer>;
+  if (isLoading) return <PageContainer title="Alumnado asignado"><div className="h-32 bg-gray-200 dark:bg-neutral-dark rounded animate-pulse"></div></PageContainer>;
+  if (!professor) return <PageContainer title="Alumnado asignado"><p>Non se atoparon datos do profesor/a.</p></PageContainer>;
 
   return (
-    <PageContainer title="Estudiantes Asignados">
+    <PageContainer title="Alumnado asignado">
       {courses.length === 0 ? (
-        <Card title="Sin cursos asignados">
-          <p className="text-neutral-medium">Actualmente no tienes cursos asignados.</p>
+        <Card title="Sen cursos asignados">
+          <p className="text-neutral-medium">Actualmente non tes cursos asignados.</p>
         </Card>
       ) : (
         courses.map(course => {
@@ -65,7 +65,7 @@ const ProfessorAssignedStudentsPage: React.FC = () => {
           return (
             <Card key={course.id} title={`Curso: ${course.name}`} className="mb-6">
               {courseStudents.length === 0 ? (
-                <p className="text-neutral-medium">No hay estudiantes asignados a este curso.</p>
+                <p className="text-neutral-medium">Non hai alumnado asignado a este curso.</p>
               ) : (
                 <ul className="divide-y divide-neutral-light dark:divide-neutral-medium">
                   {courseStudents.map(student => (
@@ -76,8 +76,8 @@ const ProfessorAssignedStudentsPage: React.FC = () => {
                       </div>
                       <div className="flex flex-col md:flex-row md:items-center gap-2 mt-2 md:mt-0">
                         <Link to={`/student-profile?studentId=${student.id}`} className="text-primary underline text-xs">Ver perfil</Link>
-                        {/* Espacio para observaciones y ficha de seguimiento */}
-                        <span className="text-xs text-neutral-medium">(Observaciones y ficha: próximamente)</span>
+                        {/* Espazo para observacións e ficha de seguimento */}
+                        <span className="text-xs text-neutral-medium">(Observacións e ficha: próximamente)</span>
                       </div>
                     </li>
                   ))}

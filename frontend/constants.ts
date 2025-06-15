@@ -63,7 +63,6 @@ interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Panel de Control', href: ROUTES.dashboard, icon: 'fa-solid fa-tachometer-alt', roles: [UserRole.Admin, UserRole.Professor, UserRole.Student] },
-  
   // Admin specific
   { label: 'Alumnado', href: ROUTES.students, icon: 'fa-solid fa-user-graduate', roles: [UserRole.Admin] },
   { label: 'Profesorado', href: ROUTES.professors, icon: 'fa-solid fa-chalkboard-teacher', roles: [UserRole.Admin] },
@@ -71,15 +70,10 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Pagamentos', href: ROUTES.payments, icon: 'fa-solid fa-credit-card', roles: [UserRole.Admin] },
   { label: 'Informes', href: ROUTES.reports, icon: 'fa-solid fa-chart-line', roles: [UserRole.Admin] },
 
-  // Professor specific
-  { label: 'O Meu Horario', href: ROUTES.schedules, icon: 'fa-solid fa-calendar-alt', roles: [UserRole.Professor] },
-  { label: 'Alumnado Asignado', href: ROUTES.assignedStudents, icon: 'fa-solid fa-users', roles: [UserRole.Professor] },
-  { label: 'Xestionar Cualificacións', href: ROUTES.manageGrades, icon: 'fa-solid fa-marker', roles: [UserRole.Professor] },
-  
-  // Professor advanced modules
-  { label: 'Estudiantes Asignados', href: '/professor-assigned-students', icon: 'fa-solid fa-users', roles: [UserRole.Professor] },
-  { label: 'Horario Profesor', href: '/professor-schedule', icon: 'fa-solid fa-calendar-alt', roles: [UserRole.Professor] },
-  { label: 'Evaluaciones', href: '/professor-evaluations', icon: 'fa-solid fa-clipboard-check', roles: [UserRole.Professor] },
+  // Professor specific (solo módulos reales, gallego, sin duplicados ni pruebas)
+  { label: 'O Meu Horario', href: '/professor-schedule', icon: 'fa-solid fa-calendar-alt', roles: [UserRole.Professor] },
+  { label: 'Alumnado asignado', href: '/professor-assigned-students', icon: 'fa-solid fa-users', roles: [UserRole.Professor] },
+  { label: 'Xestionar cualificacións', href: ROUTES.manageGrades, icon: 'fa-solid fa-marker', roles: [UserRole.Professor] },
   { label: 'Recursos', href: '/professor-resources', icon: 'fa-solid fa-music', roles: [UserRole.Professor] },
   { label: 'Comunicación', href: '/professor-messages', icon: 'fa-solid fa-comments', roles: [UserRole.Professor] },
   { label: 'Ausencias', href: '/professor-attendance', icon: 'fa-solid fa-user-times', roles: [UserRole.Professor] },
