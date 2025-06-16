@@ -1,10 +1,11 @@
 from django.urls import path
 from . import views
 from rest_framework.routers import DefaultRouter
-from .views import NotificationViewSet
+from .views import NotificationViewSet, AttendanceViewSet
 
 router = DefaultRouter()
 router.register(r'notifications', NotificationViewSet, basename='notification')
+router.register(r'attendance', AttendanceViewSet, basename='attendance')
 
 urlpatterns = [
     path('', views.root_welcome, name='root_welcome'),

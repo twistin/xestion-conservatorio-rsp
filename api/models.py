@@ -81,3 +81,28 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.titulo} - {self.usuario_destino} ({self.tipo})"
+
+class Attendance(models.Model):
+    STATUS_CHOICES = [
+        ('present', 'Presente'),
+        ('absent', 'Ausente'),
+        ('late', 'Tarde'),
+        ('justified', 'Justificado'),
+    ]
+    JUSTIFICATION_STATUS_CHOICES = [
+        ('pending', 'Pendiente'),
+        ('approved', 'Aprobada'),
+        ('rejected', 'Rechazada'),
+        ('none', 'Sin justificación'),
+    ]
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
+    date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    motivo = models.TextField(blank=True, null=True)
+    justification_status = models.CharField(max_length=20, choices=JUSTIFICATION_STATUS_CHOICES, default='none')
+    justification_comment = models.TextField(blank=True, null=True)
+    justification_document = models.FileField(upload_to='justifications/', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.student.first_name} {self.student.last_name} - {self.date} - {self.status}"

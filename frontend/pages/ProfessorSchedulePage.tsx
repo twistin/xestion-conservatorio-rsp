@@ -5,6 +5,7 @@ import Button from '../components/ui/Button';
 import { useAuth } from '../hooks/useAuth';
 import * as dataService from '../services/dataService';
 import { ScheduleItem, UserRole, Course } from '../types';
+import { createEvents, EventAttributes } from 'ics';
 
 const daysOfWeek: ScheduleItem['dayOfWeek'][] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const daysOfWeekGalician: Record<ScheduleItem['dayOfWeek'], string> = {
@@ -55,8 +56,49 @@ const ProfessorSchedulePage: React.FC = () => {
     alert('Exportación a PDF dispoñible próximamente.');
   };
   const handleExportICS = () => {
-    // Placeholder: aquí se integraría ics.js o similar
-    alert('Exportación a calendario ICS dispoñible próximamente.');
+    if (!schedule.length) return;
+    const today = new Date();
+    const events: EventAttributes[] = schedule.map(item => {
+      const [startHour, startMin] = item.startTime.split(':').map(Number);
+      const [endHour, endMin] = item.endTime.split(':').map(Number);
+      // Usar una fecha de ejemplo (hoy) para la demo, en real usar la fecha real del evento
+      const start: [number, number, number, number, number] = [today.getFullYear(), today.getMonth() + 1, today.getDate(), startHour, startMin];
+      const end: [number, number, number, number, number] = [today.getFullYear(), today.getMonth() + 1, today.getDate(), endHour, endMin];
+      return {
+        title: item.title,
+        start,
+        end,
+        description: item.type,
+        location: item.location,
+      };
+    });
+    createEvents(events, (error, value) => {
+      if (error) {
+        alert('Error al exportar ICS');
+        return;
+      }
+      const blob = new Blob([value], { type: 'text/calendar' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'horario_profesor.ics';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  };
+
+  // Resalta bloques de tutoría, reunión, ensayo
+  const getBlockColor = (type: ScheduleItem['type']) => {
+    switch (type) {
+      case 'Event':
+        return 'bg-yellow-100 dark:bg-yellow-900 border-yellow-300 dark:border-yellow-700';
+      case 'GroupSession':
+        return 'bg-green-100 dark:bg-green-900 border-green-300 dark:border-green-700';
+      case 'IndividualLesson':
+        return 'bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700';
+      default:
+        return 'bg-neutral-light dark:bg-neutral-dark border-blue-100 dark:border-neutral-700';
+    }
   };
 
   const renderScheduleList = (items: ScheduleItem[]) => (
@@ -73,7 +115,7 @@ const ProfessorSchedulePage: React.FC = () => {
         };
         const duration = getDuration(item.startTime, item.endTime);
         return (
-          <li key={item.id} className="p-3 rounded-md bg-neutral-light dark:bg-neutral-dark shadow-sm flex flex-col gap-2 border border-blue-100 dark:border-neutral-700">
+          <li key={item.id} className={`p-3 rounded-md shadow-sm flex flex-col gap-2 border ${getBlockColor(item.type)}`}>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1">
               <span className="font-semibold text-primary dark:text-accent text-base">{item.title || course?.name || 'Sen grupo'}</span>
               <span className="text-xs text-neutral-medium">{item.startTime} - {item.endTime} ({duration} min)</span>

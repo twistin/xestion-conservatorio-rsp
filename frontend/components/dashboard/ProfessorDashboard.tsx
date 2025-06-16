@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { User, Course, ScheduleItem, Student } from '../../types';
 import PageContainer from '../layout/PageContainer';
@@ -8,6 +7,7 @@ import { ICONS, ROUTES } from '../../constants';
 import * as dataService from '../../services/dataService';
 import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
+import NotificationsList from '../notifications/NotificationsList';
 
 interface ProfessorDashboardProps {
   user: User;
@@ -129,6 +129,10 @@ const ProfessorDashboard: React.FC<ProfessorDashboardProps> = ({ user }) => {
         ) : (
           <p className="text-sm text-neutral-medium dark:text-gray-400">Actualmente non ten cursos asignados.</p>
         )}
+      </Card>
+
+      <Card title="Notificacións recentes" className="mb-8">
+        <NotificationsList />
       </Card>
     </PageContainer>
   );

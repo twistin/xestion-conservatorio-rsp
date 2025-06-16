@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import viewsets, serializers
-from .models import Student, Professor, Course, Payment, Instrument, Observation, Enrollment, Notification
+from .models import Student, Professor, Course, Payment, Instrument, Observation, Enrollment, Notification, Attendance
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
@@ -50,6 +50,11 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
+        fields = '__all__'
+
+class AttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
         fields = '__all__'
 
 @csrf_exempt
@@ -503,3 +508,7 @@ def enrollment_detail(request, pk):
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all().order_by('-data_envio')
     serializer_class = NotificationSerializer
+
+class AttendanceViewSet(viewsets.ModelViewSet):
+    queryset = Attendance.objects.all().order_by('-date')
+    serializer_class = AttendanceSerializer

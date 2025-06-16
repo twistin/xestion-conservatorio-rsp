@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             title={item.label}
           >
             <i className={`${item.icon} text-lg ${isOpen ? 'mr-3' : ''}`}></i>
-            {isOpen && <span className="text-sm">{item.label}</span>}
+            {isOpen && <span className="text-sm text-white">{item.label}</span>}
           </NavLink>
         ))}
       </nav>

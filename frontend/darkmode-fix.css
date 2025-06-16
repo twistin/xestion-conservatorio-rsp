@@ -1,0 +1,205 @@
+/* Estilos para modo oscuro y clases personalizadas usadas en los componentes */
+
+:root {
+  --dark-surface: #2D2D2D;
+  --neutral-dark: #1F2937;
+  --neutral-medium: #6B7280;
+  --neutral-light: #F3F4F6;
+  --white: #FFFFFF;
+}
+
+body.dark, .dark {
+  background-color: #2D2D2D;
+  color: #E5E7EB;
+}
+
+body.dark-mode, .dark-mode body {
+  background: #181a1b !important;
+  color: #f3f3f3 !important;
+}
+
+.dark .bg-white, .dark.bg-white {
+  background-color: #2D2D2D !important;
+}
+
+.dark .bg-neutral-light, .dark.bg-neutral-light {
+  background-color: #1F2937 !important;
+}
+
+.dark .text-neutral-dark, .dark.text-neutral-dark {
+  color: #E5E7EB !important;
+}
+
+.dark .text-neutral-medium, .dark.text-neutral-medium {
+  color: #F3F4F6 !important;
+}
+
+.dark .border-neutral-light, .dark.border-neutral-light {
+  border-color: #6B7280 !important;
+}
+
+.dark .border-blue-100, .dark.border-blue-100 {
+  border-color: #3B82F6 !important;
+}
+
+.dark .bg-gray-50, .dark.bg-gray-50 {
+  background-color: #23272f !important;
+}
+
+.dark .max-w-xl, .dark .bg-white, .dark .p-6, .dark .rounded, .dark .rounded-lg, .dark .rounded-xl {
+  background-color: #23272f !important;
+  color: #E5E7EB !important;
+}
+
+.dark input, .dark textarea, .dark select {
+  background-color: #23272f !important;
+  color: #E5E7EB !important;
+  border-color: #6B7280 !important;
+}
+
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background: #23272b !important;
+  color: #f3f3f3 !important;
+  border: 1px solid #444 !important;
+}
+
+.dark label, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6, .dark .font-medium, .dark .font-bold {
+  color: #E5E7EB !important;
+}
+
+.dark-mode label {
+  color: #f3f3f3 !important;
+}
+
+.dark button, .dark .text-blue-600, .dark .text-primary {
+  color: #3B82F6 !important;
+}
+
+.dark-mode button,
+.dark-mode .btn {
+  background: #2d333b !important;
+  color: #f3f3f3 !important;
+  border: 1px solid #444 !important;
+}
+
+.dark option, .dark select option {
+  background-color: #23272f !important;
+  color: #E5E7EB !important;
+}
+
+.dark .text-black, .dark.text-black {
+  color: #E5E7EB !important;
+}
+
+.dark .border, .dark .border-gray-300 {
+  border-color: #6B7280 !important;
+}
+
+/* --- Fixes generales para modo oscuro --- */
+.dark-mode .card, .dark-mode .modal, .dark-mode .form-container {
+  background: #23272b !important;
+  color: #f3f3f3 !important;
+  border: 1px solid #444 !important;
+}
+
+/* Específico para la pantalla de Comunicación (por selector o id si existe) */
+.dark-mode .professor-messages-page, 
+.dark-mode #professor-messages-page, 
+.dark-mode .communication-form, 
+.dark-mode #communication-form {
+  background: #23272b !important;
+  color: #f3f3f3 !important;
+}
+
+.dark-mode .communication-form input,
+.dark-mode .communication-form textarea,
+.dark-mode .communication-form select {
+  background: #23272b !important;
+  color: #f3f3f3 !important;
+  border: 1px solid #444 !important;
+}
+
+.dark-mode .communication-form label {
+  color: #f3f3f3 !important;
+}
+
+.dark-mode .communication-form button {
+  background: #2d333b !important;
+  color: #f3f3f3 !important;
+  border: 1px solid #444 !important;
+}
+
+/* Mensajes de feedback */
+.dark-mode .form-feedback, .dark-mode .form-error, .dark-mode .form-success {
+  color: #ffb347 !important;
+  background: #23272b !important;
+}
+
+/* Placeholder text */
+.dark-mode input::placeholder, .dark-mode textarea::placeholder {
+  color: #b0b0b0 !important;
+  opacity: 1;
+}
+
+/* Asegura contraste en links */
+.dark-mode a {
+  color: #4ea1ff !important;
+}
+
+/* Scrollbar para modo oscuro */
+.dark-mode ::-webkit-scrollbar {
+  background: #23272b;
+}
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+/* Puedes añadir más reglas según las clases que uses en los componentes */
+/* Fix global para ventanas, bloques y formularios en modo oscuro para el Asistente IA */
+.ia-block,
+.ia-block input,
+.ia-block textarea,
+.ia-block select {
+    transition: background 0.2s, color 0.2s;
+}
+
+.dark .ia-block,
+[data-theme="dark"] .ia-block {
+    background: #18181b !important;
+    color: #f4f4f5 !important;
+    border-color: #333 !important;
+}
+
+.dark .ia-block input,
+.dark .ia-block textarea,
+.dark .ia-block select,
+[data-theme="dark"] .ia-block input,
+[data-theme="dark"] .ia-block textarea,
+[data-theme="dark"] .ia-block select {
+    background: #27272a !important;
+    color: #f4f4f5 !important;
+    border-color: #444 !important;
+}
+
+/*
+.dark .ia-block *,
+[data-theme="dark"] .ia-block * {
+    color: #f4f4f5 !important;
+}
+    */
+.dark .ia-block,
+[data-theme="dark"] .ia-block {
+    background: #18181b !important;
+    color: inherit !important;
+    border-color: #333 !important;   }
+
+        /* Forzar color blanco en los enlaces/textos del menú lateral en modo oscuro */
+        .dark .sidebar-menu .text-primary,
+        .dark .sidebar-menu .text-blue-600,
+        .dark .sidebar-menu a,
+        .dark .sidebar-menu li,
+        .dark .sidebar-menu span {
+            color: #fff !important;
+        }

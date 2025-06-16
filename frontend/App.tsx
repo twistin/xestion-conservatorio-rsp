@@ -34,7 +34,7 @@ import ProfessorAttendancePage from './pages/ProfessorAttendancePage';
 import ProfessorAIAssistantPage from './pages/ProfessorAIAssistantPage';
 import ProfessorActivitiesPage from './pages/ProfessorActivitiesPage';
 import ProfessorStatsPage from './pages/ProfessorStatsPage';
-import ProfessorAdminPage from './pages/ProfessorAdminPage';
+import './darkmode-fix.css';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
@@ -91,14 +91,12 @@ const App: React.FC = () => {
                     <Route path="/professor-assigned-students" element={<ProfessorAssignedStudentsPage />} />
                     <Route path="/manage-grades" element={<ProfessorEvaluationsPage />} />
                     <Route path="/professor-schedule" element={<ProfessorSchedulePage />} />
-                    <Route path="/professor-evaluations" element={<ProfessorEvaluationsPage />} />
                     <Route path="/professor-resources" element={<ProfessorResourcesPage />} />
                     <Route path="/professor-messages" element={<ProfessorMessagesPage />} />
                     <Route path="/professor-attendance" element={<ProfessorAttendancePage />} />
                     <Route path="/professor-ai" element={<ProfessorAIAssistantPage />} />
                     <Route path="/professor-activities" element={<ProfessorActivitiesPage />} />
                     <Route path="/professor-stats" element={<ProfessorStatsPage />} />
-                    <Route path="/professor-admin" element={<ProfessorAdminPage />} />
                   </>
                 )}
 

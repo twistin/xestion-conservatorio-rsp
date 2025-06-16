@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import BackendHelloTest from './pages/BackendHelloTest';
+import '../frontend/darkmode-fix.css';
 
 function App() {
   return (

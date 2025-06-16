@@ -70,7 +70,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Pagamentos', href: ROUTES.payments, icon: 'fa-solid fa-credit-card', roles: [UserRole.Admin] },
   { label: 'Informes', href: ROUTES.reports, icon: 'fa-solid fa-chart-line', roles: [UserRole.Admin] },
 
-  // Professor specific (solo módulos reales, gallego, sin duplicados ni pruebas)
+  // Professor specific (sin Administración ni Notificacións)
   { label: 'O Meu Horario', href: '/professor-schedule', icon: 'fa-solid fa-calendar-alt', roles: [UserRole.Professor] },
   { label: 'Alumnado asignado', href: '/professor-assigned-students', icon: 'fa-solid fa-users', roles: [UserRole.Professor] },
   { label: 'Xestionar cualificacións', href: ROUTES.manageGrades, icon: 'fa-solid fa-marker', roles: [UserRole.Professor] },
@@ -80,7 +80,6 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Asistente IA', href: '/professor-ai', icon: 'fa-solid fa-robot', roles: [UserRole.Professor] },
   { label: 'Actividades', href: '/professor-activities', icon: 'fa-solid fa-users-rectangle', roles: [UserRole.Professor] },
   { label: 'Estadísticas', href: '/professor-stats', icon: 'fa-solid fa-chart-bar', roles: [UserRole.Professor] },
-  { label: 'Administración', href: '/professor-admin', icon: 'fa-solid fa-file-alt', roles: [UserRole.Professor] },
 
   // Student specific
   { label: 'Os Meus Cursos', href: ROUTES.myCourses, icon: 'fa-solid fa-book-open-reader', roles: [UserRole.Student] },
@@ -101,7 +100,7 @@ export const NAV_ITEMS: NavItem[] = [
 
   // Common
   { label: 'Horarios Xerais', href: ROUTES.schedules, icon: 'fa-solid fa-calendar-days', roles: [UserRole.Admin] }, // Admin general schedule view
-  { label: 'Notificacións', href: ROUTES.notifications, icon: 'fa-solid fa-bell', roles: [UserRole.Admin, UserRole.Professor, UserRole.Student] },
+  { label: 'Notificacións', href: ROUTES.notifications, icon: 'fa-solid fa-bell', roles: [UserRole.Admin, UserRole.Student] },
 ];
 
 export const USER_MENU_ITEMS = [

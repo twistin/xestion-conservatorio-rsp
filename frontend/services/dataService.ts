@@ -306,6 +306,26 @@ export const addItem = async <T extends {id?: string}>(item: Omit<T, 'id'>, type
   throw new Error('Tipo no soportado en addItem');
 };
 
+// === ACTIVIDADES ARTÍSTICAS (mock, adaptar a backend real) ===
+const mockActivities: any[] = [];
+
+export function getActivities(type?: string): Promise<any[]> {
+  if (type) {
+    return simulateApiCall(mockActivities.filter(a => a.type === type));
+  }
+  return simulateApiCall(mockActivities);
+}
+
+export function addActivity(activity: any): Promise<any> {
+  const newActivity = {
+    id: `activity-${Date.now()}`,
+    ...activity,
+    fileUrl: activity.file ? activity.file.name : undefined,
+  };
+  mockActivities.unshift(newActivity);
+  return simulateApiCall(newActivity);
+}
+
 export const updateItem = async <T extends {id: string}>(item: T, type: string): Promise<T> => {
   if (type === 'student') {
     const res = await fetch(`${API_BASE}/students/${item.id}/`, {
